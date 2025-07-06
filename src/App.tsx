@@ -6,7 +6,6 @@ import Labs from './Labs/index'
 import AssignmentEditor from './Kambaz/Courses/Assignments/Editor';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <HashRouter>
