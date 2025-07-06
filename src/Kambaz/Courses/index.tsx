@@ -4,6 +4,7 @@ import Home from "./index";            // maybe rename to CourseHome.tsx
 import Modules from "./Modules/index";
 import Assignments from "./Assignments/index";
 import AssignmentEditor from "./Assignments/Editor";
+import CourseStatus from "./Home/Status";
 
 export default function Courses() {
   return (
@@ -28,7 +29,9 @@ export default function Courses() {
             {/* fallback if you want */}
             {/* <Route path="*" element={<CourseStatus />} /> */}
           </Routes>
-        </td>
+          </td>
+          
+        
       </tr>
     </table>
   );
