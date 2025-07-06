@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import AssignmentEditor from "./Editor";
 
 export default function Assignments() {
   return (

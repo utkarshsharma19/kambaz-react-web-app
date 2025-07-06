@@ -1,7 +1,5 @@
 import { Routes, Route, Navigate } from "react-router";
 import Account from "./Account/index";
-import AssignmentEditor from "./Courses/Assignments/Editor";
-import Assignments from "./Courses/Assignments/index";
 import Courses from "./Courses/index";
 import Dashboard from "./Dashboard";
 import KambazNavigation from "./Navigation";

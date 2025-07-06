@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import CourseNavigation from "./Navigation";
 import Home from "./index";            // maybe rename to CourseHome.tsx
 import Modules from "./Modules/index";
-import CourseStatus from "./Home/Status";
 import Assignments from "./Assignments/index";
 import AssignmentEditor from "./Assignments/Editor";
 
@@ -15,7 +14,7 @@ export default function Courses() {
         </td>
         <td valign="top">
           <Routes>
-            {/* default → Home */}
+        
             <Route path="/" element={<Navigate to="Home" replace />} />
             <Route path="Home" element={<Home />} />
             <Route path="Modules" element={<Modules />} />
