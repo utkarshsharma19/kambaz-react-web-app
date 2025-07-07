@@ -50,44 +50,106 @@ My favorite books (in no particular order)
   <li>Red Mars</li>
   <li>The Forever War</li>
 </ul>
-Your favorite books (in no particular order)
-<ul id="wd-your-books">
-  {/* complete on your own */}
-</ul>
+<div>
+      <h3>Your favorite books (in no particular order)</h3>
+      <ul id="wd-your-books">
+        <li>1984 by George Orwell</li>
+        <li>The Great Gatsby by F. Scott Fitzgerald</li>
+        <li>To Kill a Mockingbird by Harper Lee</li>
+        <li>The Catcher in the Rye by J.D. Salinger</li>
+        <li>Sapiens by Yuval Noah Harari</li>
+      </ul>
+    </div>
 <div id="wd-tables">
-        <h4>Table Tag</h4>
-        <table border={1} width="100%">
-          <thead>
-            <tr>
-              <th>Quiz</th>
-              <th>Topic</th>
-              <th>Date</th>
-              <th>Grade</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Q1</td>
-              <td>HTML</td>
-              <td>2/3/21</td>
-              <td>85</td>
-            </tr>
-            <tr>
-              <td>Q2</td>
-              <td>CSS</td>
-              <td>2/10/21</td>
-              <td>90</td>
-            </tr>
-            <tr> ... </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colSpan={3}>Average</td>
-              <td>90</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+  <h4>Table Tag</h4>
+  <table border={1} width="100%">
+    <thead>
+      <tr>
+        <th>Quiz</th>
+        <th>Topic</th>
+        <th>Date</th>
+        <th>Grade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Q1</td>
+        <td>HTML</td>
+        <td>2/3/21</td>
+        <td>85</td>
+      </tr>
+      <tr>
+        <td>Q2</td>
+        <td>CSS</td>
+        <td>2/10/21</td>
+        <td>90</td>
+      </tr>
+      <tr>
+        <td>Q3</td>
+        <td>Flexbox</td>
+        <td>2/17/21</td>
+        <td>88</td>
+      </tr>
+      <tr>
+        <td>Q4</td>
+        <td>Grid</td>
+        <td>2/24/21</td>
+        <td>92</td>
+      </tr>
+      <tr>
+        <td>Q5</td>
+        <td>Bootstrap</td>
+        <td>3/3/21</td>
+        <td>87</td>
+      </tr>
+      <tr>
+        <td>Q6</td>
+        <td>JavaScript Basics</td>
+        <td>3/10/21</td>
+        <td>91</td>
+      </tr>
+      <tr>
+        <td>Q7</td>
+        <td>DOM Manipulation</td>
+        <td>3/17/21</td>
+        <td>89</td>
+      </tr>
+      <tr>
+        <td>Q8</td>
+        <td>React Intro</td>
+        <td>3/24/21</td>
+        <td>93</td>
+      </tr>
+      <tr>
+        <td>Q9</td>
+        <td>React Hooks</td>
+        <td>3/31/21</td>
+        <td>90</td>
+      </tr>
+      <tr>
+        <td>Q10</td>
+        <td>Routing</td>
+        <td>4/7/21</td>
+        <td>94</td>
+      </tr>
+      <tr>
+        <td colSpan={3}><b>Average</b></td>
+        <td><b>89.9</b></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="wd-images">
+  <h4>Image tag</h4>
+  Loading an image from the internet: <br />
+  <img id="wd-starship" width="400px"   src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg" />
+  <br />
+  Loading a local image:
+  <br />
+  <img id="wd-teslabot" src = "../../assets/Tesla_Bot_2023.jpg" height="200px" /></div>
+
+
       <h5>Text boxes</h5>
 <label>Biography:</label><br/>
 <textarea id="wd-textarea" cols={30} rows={10}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea>
