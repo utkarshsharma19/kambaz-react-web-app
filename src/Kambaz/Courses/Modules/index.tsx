@@ -1,5 +1,3 @@
-import CourseStatus from "../Home/Status";
-
 export default function Modules() {
   return (
     <table>
