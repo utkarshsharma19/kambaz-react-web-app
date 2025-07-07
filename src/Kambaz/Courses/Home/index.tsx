@@ -9,7 +9,7 @@ export default function Home() {
             <col width="220" />
           </colgroup>
           <tbody>
-            <tr valign="top">
+          <tr style={{ verticalAlign: 'top' }}>
               <td>
                 <Modules />
               </td>
