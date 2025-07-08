@@ -1,7 +1,8 @@
 export default function Lab1() {
     return (
       <div id="wd-lab1">
-        <h2>Lab 1</h2>
+        <h2>Lab 1 by Utkarsh Sharma</h2>
+      <a href="https://github.com/utkarshsharma19/kambaz-react-web-app">Click here to go my github</a>
         <h3>HTML Examples</h3>
       <div id="wd-h-tag">
         <h4>Heading Tags</h4>
