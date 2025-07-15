@@ -3,26 +3,26 @@ import Account from "./Account/index";
 import Courses from "./Courses/index";
 import Dashboard from "./Dashboard";
 import KambazNavigation from "./Navigation";
+import { Container, Row, Col } from "react-bootstrap";
+
 export default function Kambaz() {
   return (
-    <div id="wd-kambaz">
-         <table>
-        <tr>
-          <td valign="top">
-            <KambazNavigation />
-          </td>
-          <td valign="top">
-      <Routes>
-        <Route path="/" element={<Navigate to="Account" />} />
-        <Route path="/Account/*" element={<Account />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
-        <Route path="/Courses/:cid/*" element={<Courses />} />
-        <Route path="/Calendar" element={<h1>Calendar</h1>} />
-        <Route path="/Inbox" element={<h1>Inbox</h1>} />
-      </Routes>
-      
-      </td>
-        </tr>
-      </table>
-    </div>
-);}
+    <Container fluid id="wd-kambaz">
+      <Row className="d-flex align-items-start">
+        <Col md="auto" className="d-none d-md-block">
+          <KambazNavigation />
+        </Col>
+        <Col>
+          <Routes>
+            <Route path="/" element={<Navigate to="Account" />} />
+            <Route path="/Account/*" element={<Account />} />
+            <Route path="/Dashboard" element={<Dashboard />} />
+            <Route path="/Courses/:cid/*" element={<Courses />} />
+            <Route path="/Calendar" element={<h1>Calendar</h1>} />
+            <Route path="/Inbox" element={<h1>Inbox</h1>} />
+          </Routes>
+        </Col>
+      </Row>
+    </Container>
+  );
+}

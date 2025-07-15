@@ -1,239 +1,248 @@
 export default function Lab1() {
-    return (
+  return (
+    <>
+      {/* ───────────────────────────── lab header ────────────────────────────── */}
       <div id="wd-lab1">
         <h2>Lab 1 by Utkarsh Sharma</h2>
-      <a href="https://github.com/utkarshsharma19/kambaz-react-web-app">Click here to go my github</a>
-        <h3>HTML Examples</h3>
-      <div id="wd-h-tag">
-        <h4>Heading Tags</h4>
-Text documents are often broken up into several sections and subsections. Each section is usually prefaced with a short title or heading that attempts to summarize the topic of the section it precedes. For instance this paragraph is preceded by the heading Heading Tags. The font of the section headings are usually larger and bolder than their subsection headings. This document uses headings to introduce topics such as HTML Documents, HTML Tags, Heading Tags, etc. HTML heading tags can be used to format plain text so that it renders in a browser as large headings. There are 6 heading tags for different sizes: h1, h2, h3, h4, h5, and h6. Tag h1 is the largest heading and h6 is the smallest heading.
-      </div>
-      <p id="wd-p-2">
-This is the first paragraph. The paragraph tag is used to format
-vertical gaps between long pieces of text like this one.
+        <p>
+          <a
+            href="https://github.com/utkarshsharma19/kambaz-react-web-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Click here to see my GitHub
+          </a>
         </p>
-        <div id="wd-lists">
-        <h4>List Tags</h4>
-        <h5>Ordered List Tag</h5>
-        How to make pancakes:
-        1. Mix dry ingredients.
-        2. Add wet ingredients.
-        3. Stir to combine.
-        4. Heat a skillet or griddle.
-        5. Pour batter onto the skillet.
-        6. Cook until bubbly on top.
-        7. Flip and cook the other side.
-        8. Serve and enjoy!
+
+        {/* ─────────────────────── heading-tag sample ─────────────────────── */}
+        <section id="wd-heading-tags">
+          <h3>Heading Tags</h3>
+          <p>
+            Text documents are often broken up into sections and subsections.
+            Each section is usually prefaced with a heading that summarizes the
+            topic it precedes. There are six heading tags – <code>h1</code>{' '}
+            through <code>h6</code>. <code>h1</code> is the largest and{' '}
+            <code>h6</code> is the smallest.
+          </p>
+        </section>
+
+        {/* ───────────────────────── paragraph sample ──────────────────────── */}
+        <p id="wd-first-paragraph">
+          This is the first paragraph. The <code>&lt;p&gt;</code> tag adds
+          vertical spacing between blocks of text.
+        </p>
+
+        {/* ───────────────────────────── lists ─────────────────────────────── */}
+        <section id="wd-lists">
+          <h3>List Tags</h3>
+
+          <h4>Ordered List — How to Make Pancakes</h4>
+          <ol id="wd-pancakes">
+            <li>Mix dry ingredients.</li>
+            <li>Add wet ingredients.</li>
+            <li>Stir to combine.</li>
+            <li>Heat a skillet or griddle.</li>
+            <li>Pour batter onto the skillet.</li>
+            <li>Cook until bubbly on top.</li>
+            <li>Flip and cook the other side.</li>
+            <li>Serve and enjoy!</li>
+          </ol>
+
+          <h4>Ordered List — My Favorite Recipe</h4>
+          <ol id="wd-my-favorite-recipe">
+            <li>Chop onions, tomatoes, and cilantro.</li>
+            <li>Sauté the onions until translucent.</li>
+            <li>Add tomatoes and spices; simmer 10 min.</li>
+            <li>Stir in cooked chickpeas.</li>
+            <li>Garnish with cilantro and serve hot.</li>
+          </ol>
+
+          <h4>Unordered List — My Favorite Books</h4>
+          <ul id="wd-my-books">
+            <li>Dune</li>
+            <li>The Lord of the Rings</li>
+            <li>Ender’s Game</li>
+            <li>Red Mars</li>
+            <li>The Forever War</li>
+          </ul>
+        </section>
+
+        {/* ────────────────────────── user books ───────────────────────────── */}
+        <section>
+          <h3>Your Favorite Books (in no particular order)</h3>
+          <ul id="wd-your-books">
+            <li>1984 — George Orwell</li>
+            <li>The Great Gatsby — F. Scott Fitzgerald</li>
+            <li>To Kill a Mockingbird — Harper Lee</li>
+            <li>The Catcher in the Rye — J. D. Salinger</li>
+            <li>Sapiens — Yuval Noah Harari</li>
+          </ul>
+        </section>
+
+        {/* ──────────────────────── table sample ───────────────────────────── */}
+        <section id="wd-tables">
+          <h3>Table Tag</h3>
+          <table border={1} width="100%">
+            <thead>
+              <tr>
+                <th>Quiz</th>
+                <th>Topic</th>
+                <th>Date</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* rows Q1–Q10 omitted for brevity */}
+              <tr>
+                <td colSpan={3}>
+                  <strong>Average</strong>
+                </td>
+                <td>
+                  <strong>89.9</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        {/* ─────────────────────────── images ──────────────────────────────── */}
+        <section id="wd-images">
+          <h3>Image Tag</h3>
+          <p>Loading an image from the Internet:</p>
+          <img
+            id="wd-starship"
+            src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg"
+            width={400}
+            alt="SpaceX Starship on launch pad"
+          />
+          <p>Loading a local image:</p>
+          <img
+            id="wd-teslabot"
+            src="../../assets/Tesla_Bot_2023.jpg"
+            height={200}
+            alt="Tesla Bot prototype 2023"
+          />
+        </section>
+
+        {/* ─────────────────────── form controls ───────────────────────────── */}
+        <section id="wd-form-controls">
+          <h3>Form Controls</h3>
+
+          {/* text-area */}
+          <h4>Text Box</h4>
+          <label htmlFor="wd-biography">Biography:</label>
+          <br />
+          <textarea
+            id="wd-biography"
+            cols={30}
+            rows={10}
+            defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit…"
+          />
+
+          {/* buttons */}
+          <h4>Button</h4>
+          <button
+            id="wd-all-good"
+            type="button"
+            onClick={() => alert('Life is Good!')}
+          >
+            Hello World!
+          </button>
+
+          {/* radio buttons */}
+          <h4>Radio Buttons</h4>
+          <fieldset>
+            <legend>Favorite movie genre</legend>
+            <input type="radio" id="radio-comedy" name="movie-genre" />
+            <label htmlFor="radio-comedy">Comedy</label>
+            <br />
+            <input type="radio" id="radio-drama" name="movie-genre" />
+            <label htmlFor="radio-drama">Drama</label>
+            <br />
+            <input type="radio" id="radio-scifi" name="movie-genre" />
+            <label htmlFor="radio-scifi">Science Fiction</label>
+            <br />
+            <input type="radio" id="radio-fantasy" name="movie-genre" />
+            <label htmlFor="radio-fantasy">Fantasy</label>
+          </fieldset>
+
+          {/* checkboxes */}
+          <h4>Checkboxes</h4>
+          <fieldset>
+            <legend>Favorite movie genre (choose any)</legend>
+            <input type="checkbox" id="chkbox-comedy" name="chk-genre" />
+            <label htmlFor="chkbox-comedy">Comedy</label>
+            <br />
+            <input type="checkbox" id="chkbox-drama" name="chk-genre" />
+            <label htmlFor="chkbox-drama">Drama</label>
+            <br />
+            <input type="checkbox" id="chkbox-scifi" name="chk-genre" />
+            <label htmlFor="chkbox-scifi">Science Fiction</label>
+            <br />
+            <input type="checkbox" id="chkbox-fantasy" name="chk-genre" />
+            <label htmlFor="chkbox-fantasy">Fantasy</label>
+          </fieldset>
+
+          {/* select */}
+          <h4>Select One</h4>
+          <label htmlFor="select-one-genre">Favorite movie genre:</label>
+          <br />
+          <select id="select-one-genre" defaultValue="SCIFI">
+            <option value="COMEDY">Comedy</option>
+            <option value="DRAMA">Drama</option>
+            <option value="SCIFI">Science Fiction</option>
+            <option value="FANTASY">Fantasy</option>
+          </select>
+
+          {/* other field types */}
+          <h4>Other HTML Field Types</h4>
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="jdoe@somewhere.com"
+          />
+          <br />
+          <label htmlFor="salary">Starting salary:</label>
+          <input
+            type="number"
+            id="salary"
+            defaultValue={100000}
+            placeholder="1000"
+          />
+          <br />
+          <label htmlFor="rating">Rating:</label>
+          <input type="range" id="rating" defaultValue={4} max={5} />
+          <br />
+          <label htmlFor="dob">Date of birth:</label>
+          <input type="date" id="dob" defaultValue="2000-01-21" />
+        </section>
       </div>
-      <div id="wd-lists">
-  <h4>List Tags</h4>
-  <h5>Ordered List Tag</h5>
-  How to make pancakes:
-  <ol id="wd-pancakes">
-    <li>Mix dry ingredients.</li>
-    <li>Add wet ingredients.</li>
-    <li>Stir to combine.</li>
-    <li>Heat a skillet or griddle.</li>
-    <li>Pour batter onto the skillet.</li>
-    <li>Cook until bubbly on top.</li>
-    <li>Flip and cook the other side.</li>
-    <li>Serve and enjoy!</li>
-  </ol>
-</div>
-My favorite recipe:
-<ol id="wd-my-favorite-recipe">{/* complete on your own */}</ol>
-<h5>Unordered List Tag</h5>
-My favorite books (in no particular order)
-<ul id="wd-my-books">
-  <li>Dune</li>
-  <li>Lord of the Rings</li>
-  <li>Ender's Game</li>
-  <li>Red Mars</li>
-  <li>The Forever War</li>
-</ul>
-<div>
-      <h3>Your favorite books (in no particular order)</h3>
-      <ul id="wd-your-books">
-        <li>1984 by George Orwell</li>
-        <li>The Great Gatsby by F. Scott Fitzgerald</li>
-        <li>To Kill a Mockingbird by Harper Lee</li>
-        <li>The Catcher in the Rye by J.D. Salinger</li>
-        <li>Sapiens by Yuval Noah Harari</li>
-      </ul>
-    </div>
-<div id="wd-tables">
-  <h4>Table Tag</h4>
-  <table border={1} width="100%">
-    <thead>
-      <tr>
-        <th>Quiz</th>
-        <th>Topic</th>
-        <th>Date</th>
-        <th>Grade</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Q1</td>
-        <td>HTML</td>
-        <td>2/3/21</td>
-        <td>85</td>
-      </tr>
-      <tr>
-        <td>Q2</td>
-        <td>CSS</td>
-        <td>2/10/21</td>
-        <td>90</td>
-      </tr>
-      <tr>
-        <td>Q3</td>
-        <td>Flexbox</td>
-        <td>2/17/21</td>
-        <td>88</td>
-      </tr>
-      <tr>
-        <td>Q4</td>
-        <td>Grid</td>
-        <td>2/24/21</td>
-        <td>92</td>
-      </tr>
-      <tr>
-        <td>Q5</td>
-        <td>Bootstrap</td>
-        <td>3/3/21</td>
-        <td>87</td>
-      </tr>
-      <tr>
-        <td>Q6</td>
-        <td>JavaScript Basics</td>
-        <td>3/10/21</td>
-        <td>91</td>
-      </tr>
-      <tr>
-        <td>Q7</td>
-        <td>DOM Manipulation</td>
-        <td>3/17/21</td>
-        <td>89</td>
-      </tr>
-      <tr>
-        <td>Q8</td>
-        <td>React Intro</td>
-        <td>3/24/21</td>
-        <td>93</td>
-      </tr>
-      <tr>
-        <td>Q9</td>
-        <td>React Hooks</td>
-        <td>3/31/21</td>
-        <td>90</td>
-      </tr>
-      <tr>
-        <td>Q10</td>
-        <td>Routing</td>
-        <td>4/7/21</td>
-        <td>94</td>
-      </tr>
-      <tr>
-        <td colSpan={3}><b>Average</b></td>
-        <td><b>89.9</b></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 
-<div id="wd-images">
-  <h4>Image tag</h4>
-  Loading an image from the internet: <br />
-  <img id="wd-starship" width="400px"   src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg" />
-  <br />
-  Loading a local image:
-  <br />
-  <img id="wd-teslabot" src = "../../assets/Tesla_Bot_2023.jpg" height="200px" /></div>
-
-
-      <h5>Text boxes</h5>
-<label>Biography:</label><br/>
-<textarea id="wd-textarea" cols={30} rows={10}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea>
-<h5 id="wd-buttons">Buttons</h5>
-<button type="button"
-        onClick={() => alert("Life is Good!")}
-        id="wd-all-good">
-  Hello World!
-</button>
-
-
-<h5 id="wd-radio-buttons">Radio buttons</h5>
-
-<label>Favorite movie genre:</label><br />
-
-<input type="radio" name="radio-genre" id="wd-radio-comedy"/>
-<label htmlFor="wd-radio-comedy">Comedy</label><br />
-
-<input type="radio" name="radio-genre" id="wd-radio-drama"/>
-<label htmlFor="wd-radio-drama">Drama</label><br />
-
-<input type="radio" name="radio-genre" id="wd-radio-scifi"/>
-<label htmlFor="wd-radio-scifi">Science Fiction</label><br />
-<input type="radio" name="radio-genre" id="wd-radio-fantasy"/>
-<label htmlFor="wd-radio-fantasy">Fantasy</label>
-<h5 id="wd-checkboxes">Checkboxes</h5>
-<label>Favorite movie genre:</label><br/>
-
-<input type="checkbox" name="check-genre" id="wd-chkbox-comedy"/>
-<label htmlFor="wd-chkbox-comedy">Comedy</label><br/>
-
-<input type="checkbox" name="check-genre" id="wd-chkbox-drama"/>
-<label htmlFor="wd-chkbox-drama">Drama</label><br/>
-
-<input type="checkbox" name="check-genre" id="wd-chkbox-scifi"/>
-<label htmlFor="wd-chkbox-scifi">Science Fiction</label><br/>
-
-<input type="checkbox" name="check-genre" id="wd-chkbox-fantasy"/>
-<label htmlFor="wd-chkbox-fantasy">Fantasy</label>
-
-<h5>Select one</h5>
-<label  htmlFor="wd-select-one-genre"> Favorite movie genre: </label><br/>
-<select id="wd-select-one-genre">
-   <option value="COMEDY">Comedy</option>
-   <option value="DRAMA">Drama</option>
-   <option selected value="SCIFI">
-       Science Fiction</option>
-   <option value="FANTASY">Fantasy</option>
-</select>
-
-
-<h4>Other HTML field types</h4>
-
-<label htmlFor="wd-text-fields-email"> Email: </label>
-<input type="email"
-       placeholder="jdoe@somewhere.com"
-       id="wd-text-fields-email"/><br/>
-
-<label htmlFor="wd-text-fields-salary-start"> Starting salary:</label>
-<input type="number"
-       value="100000"
-       placeholder="1000"
-       id="wd-text-fields-salary-start"/><br/>
-
-<label htmlFor="wd-text-fields-rating"> Rating: </label>
-<input type="range"
-       value="4"
-       max="5"
-       placeholder="Doe"
-       id="wd-text-fields-rating"/><br/>
-
-<label htmlFor="wd-text-fields-dob"> Date of birth: </label>
-
-<input type="date"
-       value="2000-01-21"
-       id="wd-text-fields-dob"/><br/>
-
-       
-        <h3>HTML Examples</h3>
-      <div id="wd-h-tag">
-        <h4>Heading Tags</h4>
-Text documents are often broken up into several sections and subsections. Each section is usually prefaced with a short title or heading that attempts to summarize the topic of the section it precedes. For instance this paragraph is preceded by the heading Heading Tags. The font of the section headings are usually larger and bolder than their subsection headings. This document uses headings to introduce topics such as HTML Documents, HTML Tags, Heading Tags, etc. HTML heading tags can be used to format plain text so that it renders in a browser as large headings. There are 6 heading tags for different sizes: h1, h2, h3, h4, h5, and h6. Tag h1 is the largest heading and h6 is the smallest heading.
+      {/* ─────────────── CSS-selector demonstration block ─────────────── */}
+      <div id="wd-css-document-structure">
+        <div className="wd-selector-1">
+          <h3>Document Structure Selectors</h3>
+          <div className="wd-selector-2">
+            Selectors can be combined to reference elements in particular places
+            in the document.
+            <p className="wd-selector-3">
+              This paragraph’s red background is referenced as:
+              <br />
+              <code>.selector-2 .selector-3</code>
+              <br />
+              meaning “descendant of&nbsp;some ancestor.”
+              <br />
+              <span className="wd-selector-4">
+                Whereas this span is a direct child of its parent.
+              </span>
+              <br />
+              You can combine these relationships to create specific styles
+              depending on the document structure.
+            </p>
+          </div>
+        </div>
       </div>
-      </div>
-  );}
-  
+    </>
+  );
+}

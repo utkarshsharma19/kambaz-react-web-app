@@ -1,121 +1,158 @@
+import React from "react";
+import { Form, Button } from "react-bootstrap";
+import { FaSave } from "react-icons/fa";
+import { Row, Col } from "react-bootstrap";
 export default function AssignmentEditor() {
   return (
-    <form id="wd-assignment-editor">
-      <div className="field">
-        <label htmlFor="wd-name">Assignment Name</label><br />
-        <input
-          type="text"
-          id="wd-name"
-          name="wd-name"
-          placeholder="Enter assignment name"
-        />
-      </div>
+    <Form id="wd-assignment-editor" className="p-4">
+    {/* Assignment Name (label on top, left-aligned) */}
+    <Form.Group controlId="wd-name" className="mb-3">
+      <Form.Label className="text-start w-100">Assignment Name</Form.Label>
+      <Form.Control
+        type="text"
+        placeholder="Enter assignment name"
+      />
+    </Form.Group>
 
-      <div className="field">
-        <label htmlFor="wd-description">Description</label><br />
-        <textarea
-          id="wd-description"
-          name="wd-description"
+      {/* Description */}
+      <Form.Group controlId="wd-description" className="mb-3">
+        <Form.Control
+          as="textarea"
           rows={4}
           placeholder="Enter description"
         />
-      </div>
+      </Form.Group>
 
-      <div className="field">
-        <label htmlFor="wd-points">Points</label><br />
-        <input
-          type="number"
-          id="wd-points"
-          name="wd-points"
-          placeholder="0"
-        />
-      </div>
+      {/* Points */}
+      <Form.Group as={Row} controlId="wd-points" className="mb-3 align-items-center">
+  <Form.Label column sm={3}>
+    Points
+  </Form.Label>
+  <Col sm={9}>
+    <Form.Control type="number" placeholder="0" />
+  </Col>
+</Form.Group>
 
-      <div className="field">
-        <label htmlFor="wd-group">Assignment Group</label><br />
-        <select id="wd-group" name="wd-group">
-          <option value="assignment">Assignment</option>
-          <option value="quiz">Quiz</option>
-          <option value="exam">Exam</option>
-        </select>
-      </div>
+<Form.Group
+      as={Row}
+      controlId="wd-display-grade"
+      className="mb-3 align-items-center"
+    >
+      <Form.Label column sm={3}>
+        Assignment Group
+      </Form.Label>
+      <Col sm={9}>
+        <Form.Select defaultValue="ASSIGNMENTS">
+          <option value="ASSIGNMENTS">ASSIGNMENTS</option>
+          <option value="EXAMS">EXAMS</option>
+        </Form.Select>
+      </Col>
+    </Form.Group>
 
-      <div className="field">
-        <label htmlFor="wd-display-grade">Display Grade</label><br />
-        <select id="wd-display-grade" name="wd-display-grade">
+    <Form.Group
+      as={Row}
+      controlId="wd-display-grade"
+      className="mb-3 align-items-center"
+    >
+      <Form.Label column sm={3}>
+        Display Grade As
+      </Form.Label>
+      <Col sm={9}>
+        <Form.Select defaultValue="percentage">
           <option value="percentage">Percentage</option>
           <option value="grade">Grade</option>
-        </select>
-      </div>
+        </Form.Select>
+      </Col>
+    </Form.Group>
 
-      <div className="field">
-        <label htmlFor="wd-submission-type">Submission Type</label><br />
-        <select id="wd-submission-type" name="wd-submission-type">
-          <option value="online">Online</option>
-          <option value="onsite">Onsite</option>
-        </select>
-      </div>
+      {/* Submission Type + Options */}
+      <Row className="mb-4 align-items-start">
+  {/* label on the left */}
+  <Col md={3}>
+    <Form.Label>Submission Type</Form.Label>
+  </Col>
 
-      <fieldset id="wd-online-options">
-        <legend>Online entry options</legend>
-        <label>
-          <input type="checkbox" name="text-entry" /> Text Entry
-        </label><br />
-        <label>
-          <input type="checkbox" name="website-url" /> Website URL
-        </label><br />
-        <label>
-          <input type="checkbox" name="media-recordings" /> Media Recordings
-        </label><br />
-        <label>
-          <input type="checkbox" name="student-annotation" /> Student Annotation
-        </label><br />
-        <label>
-          <input type="checkbox" name="file-upload" /> File Upload
-        </label>
+  {/* box on the right */}
+  <Col md={9}>
+    <div className="border p-3 rounded">
+      <Form.Select defaultValue="online" className="mb-3">
+        <option value="online">Online</option>
+        <option value="onsite">Onsite</option>
+      </Form.Select>
+
+      <fieldset className="ps-3 border-start border-success">
+        <legend className="small">Online entry options</legend>
+        {[
+          "Text Entry",
+          "Website URL",
+          "Media Recordings",
+          "Student Annotation",
+          "File Upload",
+        ].map((opt) => (
+          <Form.Check
+            key={opt}
+            type="checkbox"
+            label={opt}
+            className="mb-2"
+          />
+        ))}
       </fieldset>
+    </div>
+  </Col>
+</Row>
 
-      <div className="field">
-        <label htmlFor="wd-assign-to">Assign To</label><br />
-        <select id="wd-assign-to" name="wd-assign-to">
-          <option value="Utkarsh">Utkarsh</option>
-          <option value="everyone">Everyone</option>
-        </select>
-      </div>
 
-      <div className="field">
-        <label htmlFor="wd-due-date">Due Date</label><br />
-        <input
-          type="date"
-          id="wd-due-date"
-          name="wd-due-date"
-          value="2025-07-14"
-        />
-      </div>
+      {/* Assign / Due / Available */}
+      <Row className="mb-4 align-items-start">
+  {/* “Assign” label */}
+  <Col md={3}>
+    <Form.Label>Assign</Form.Label>
+  </Col>
 
-      <div className="field">
-        <label htmlFor="wd-available-from">Available From</label><br />
-        <input
-          type="date"
-          id="wd-available-from"
-          name="wd-available-from"
-          value="2025-07-14"
-        />
-      </div>
+  {/* Box containing all the assign-related fields */}
+  <Col md={9}>
+    <div className="border p-3 rounded">
+      {/* Assign To */}
+      <Form.Group controlId="wd-assign-to" className="mb-3">
+        <Form.Label>Assign To</Form.Label>
+        <Form.Select defaultValue="Everyone">
+          <option>Everyone</option>
+          <option>Utkarsh</option>
+        </Form.Select>
+      </Form.Group>
 
-      <div className="field">
-        <label htmlFor="wd-available-until">Available Until</label><br />
-        <input
-          type="date"
-          id="wd-available-until"
-          name="wd-available-until"
-          value="2025-07-21"
-        />
-      </div>
+      {/* Due Date */}
+      <Form.Group controlId="wd-due-date" className="mb-3">
+        <Form.Label>Due Date</Form.Label>
+        <Form.Control type="date" defaultValue="2025-07-14" />
+      </Form.Group>
 
-      <div className="field">
-        <button type="submit">Save Assignment</button>
-      </div>
-    </form>
+      {/* Available From & Until on same line */}
+      <Row>
+        <Form.Group as={Col} controlId="wd-available-from" className="mb-3">
+          <Form.Label>Available From</Form.Label>
+          <Form.Control type="date" defaultValue="2025-07-14" />
+        </Form.Group>
+        <Form.Group as={Col} controlId="wd-available-until" className="mb-3">
+          <Form.Label>Available Until</Form.Label>
+          <Form.Control type="date" defaultValue="2025-07-21" />
+        </Form.Group>
+      </Row>
+    </div>
+  </Col>
+</Row>
+
+      {/* Save Button */}
+      
+      <div className="d-flex justify-content-end mt-4">
+  <Button variant="secondary" className="me-2">
+    Cancel
+  </Button>
+  <Button variant="danger" type="submit">
+    <FaSave className="me-2 text-white" />
+    <span className="text-white">Save Assignment</span>
+  </Button>
+</div>
+    </Form>
   );
 }

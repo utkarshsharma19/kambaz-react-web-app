@@ -1,64 +1,84 @@
+import React from "react";
 import { Link } from "react-router-dom";
+import { Form, Button } from "react-bootstrap";
 
 export default function Profile() {
   return (
-    <div id="wd-profile-screen">
+    <div id="wd-profile-screen" className="p-4">
       <h3>Profile</h3>
 
-      <label htmlFor="wd-username">Username: </label>
-      <input
-        defaultValue="alice"
-        placeholder="username"
-        className="wd-username"
-        id="wd-username"
-      /><br/>
+      <Form>
+        <Form.Group controlId="wd-username" className="mb-2">
+          <Form.Label>Username:</Form.Label>
+          <Form.Control
+            type="text"
+            defaultValue="alice"
+            placeholder="username"
+          />
+        </Form.Group>
 
-      <label htmlFor="wd-password">Password: </label>
-      <input
-        defaultValue="123"
-        placeholder="password"
-        type="password"
-        className="wd-password"
-        id="wd-password"
-      /><br/>
+        <Form.Group controlId="wd-password" className="mb-2">
+          <Form.Label>Password:</Form.Label>
+          <Form.Control
+            type="password"
+            defaultValue="123"
+            placeholder="password"
+          />
+        </Form.Group>
 
-      <label htmlFor="wd-firstname">First Name: </label>
-      <input
-        defaultValue="Alice"
-        placeholder="First Name"
-        id="wd-firstname"
-      /><br/>
+        <Form.Group controlId="wd-firstname" className="mb-2">
+          <Form.Label>First Name:</Form.Label>
+          <Form.Control
+            type="text"
+            defaultValue="Alice"
+            placeholder="First Name"
+          />
+        </Form.Group>
 
-      <label htmlFor="wd-lastname">Last Name: </label>
-      <input
-        defaultValue="Wonderland"
-        placeholder="Last Name"
-        id="wd-lastname"
-      /><br/>
+        <Form.Group controlId="wd-lastname" className="mb-2">
+          <Form.Label>Last Name:</Form.Label>
+          <Form.Control
+            type="text"
+            defaultValue="Wonderland"
+            placeholder="Last Name"
+          />
+        </Form.Group>
 
-      <label htmlFor="wd-dob">Date of Birth: </label>
-      <input
-        defaultValue="2000-01-01"
-        type="date"
-        id="wd-dob"
-      /><br/>
+        <Form.Group controlId="wd-dob" className="mb-2">
+          <Form.Label>Date of Birth:</Form.Label>
+          <Form.Control
+            type="date"
+            defaultValue="2000-01-01"
+          />
+        </Form.Group>
 
-      <label htmlFor="wd-email">Email: </label>
-      <input
-        defaultValue="alice@wonderland"
-        type="email"
-        id="wd-email"
-      /><br/>
+        <Form.Group controlId="wd-email" className="mb-2">
+          <Form.Label>Email:</Form.Label>
+          <Form.Control
+            type="email"
+            defaultValue="alice@wonderland"
+            placeholder="email"
+          />
+        </Form.Group>
 
-      <label htmlFor="wd-role">Role: </label>
-      <select defaultValue="FACULTY" id="wd-role">
-        <option value="USER">User</option>
-        <option value="ADMIN">Admin</option>
-        <option value="FACULTY">Faculty</option>
-        <option value="STUDENT">Student</option>
-      </select><br/>
+        <Form.Group controlId="wd-role" className="mb-3">
+          <Form.Label>Role:</Form.Label>
+          <Form.Select defaultValue="FACULTY">
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+            <option value="FACULTY">Faculty</option>
+            <option value="STUDENT">Student</option>
+          </Form.Select>
+        </Form.Group>
+      </Form>
 
-      <Link to="/Kambaz/Account/Signin">Sign out</Link>
+      <Link
+  id="wd-signout-btn"
+  to="/Kambaz/Account/Signin"
+  className="btn btn-danger text-white w-100"
+>
+  Sign out
+</Link>
     </div>
   );
 }

@@ -1,99 +1,69 @@
+// src/Kambaz/Dashboard.tsx
 import { Link } from "react-router-dom";
+import { Row, Col, Card, Button } from "react-bootstrap";
+
 export default function Dashboard() {
+  const courses = [
+    { id: "1234", title: "CS1234 React JS"    },
+    { id: "1000", title: "CS1000 Node JS"     },
+    { id: "2000", title: "CS2000 Spring Boot" },
+    { id: "3000", title: "CS3000 Flutter"     },
+    { id: "4000", title: "CS4000 Blockchain"  },
+    { id: "5000", title: "CS5000 AI"          },
+    { id: "6000", title: "CS6000 Physics JS"  },
+    { id: "5700", title: "CS5700 Mathematics" },
+  ];
+
   return (
-    <div id="wd-dashboard">
-      <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
-      <h2 id="wd-dashboard-published">Published Courses (12)</h2> <hr />
-      <div id="wd-dashboard-courses">
-        <div className="wd-dashboard-course">
-          <Link to="/Kambaz/Courses/1234/Home"
-                className="wd-dashboard-course-link" >
-            <img src="/images/reactjs.jpg" width={200} />
-            <div>
-              <h5> CS1234 React JS </h5>
-              <p className="wd-dashboard-course-title">
-                Full Stack software developer  </p>
-              <button> Go </button>
-            </div>
-          </Link>
+    <div id="wd-dashboard" style={{ marginLeft: 35 }}>
+    <h1 id="wd-dashboard-title" className="text-start">
+      Dashboard
+    </h1>
+    <hr />
 
-          <Link to="/Kambaz/Courses/1234/Home"
-                className="wd-dashboard-course-link" >
-            <img src="/images/reactjs.jpg" width={200} />
-            <div>
-              <h5> CS1000 Node JS </h5>
-              <p className="wd-dashboard-course-title">
-                Full Stack software developer  </p>
-              <button> Go </button>
-            </div>
-          </Link>
+    <h2 id="wd-dashboard-published" className="text-start">
+      Published Courses ({courses.length})
+    </h2>
+    <hr />
+      
 
-          <Link to="/Kambaz/Courses/1235/Home"
-                className="wd-dashboard-course-link" >
-            <img src="/images/reactjs.jpg" width={200} />
-            <div>
-              <h5> CS2000 Spring Boot </h5>
-              <p className="wd-dashboard-course-title">
-                Full Stack software developer  </p>
-              <button> Go </button>
-            </div>
-          </Link>
-
-          <Link to="/Kambaz/Courses/1236/Home"
-                className="wd-dashboard-course-link" >
-            <img src="/images/reactjs.jpg" width={200} />
-            <div>
-              <h5> CS3000 Flutter </h5>
-              <p className="wd-dashboard-course-title">
-                Full Stack software developer  </p>
-              <button> Go </button>
-            </div>
-          </Link>
-
-          <Link to="/Kambaz/Courses/1237/Home"
-                className="wd-dashboard-course-link" >
-            <img src="/images/reactjs.jpg" width={200} />
-            <div>
-              <h5> CS4000 Blockchian </h5>
-              <p className="wd-dashboard-course-title">
-                Full Stack software developer  </p>
-              <button> Go </button>
-            </div>
-          </Link>
-
-          <Link to="/Kambaz/Courses/1238/Home"
-                className="wd-dashboard-course-link" >
-            <img src="/images/reactjs.jpg" width={200} />
-            <div>
-              <h5> CS5000 AI </h5>
-              <p className="wd-dashboard-course-title">
-                Full Stack software developer  </p>
-              <button> Go </button>
-            </div>
-          </Link>
-
-          <Link to="/Kambaz/Courses/1239/Home"
-                className="wd-dashboard-course-link" >
-            <img src="/images/reactjs.jpg" width={200} />
-            <div>
-              <h5> CS6000 Physics JS </h5>
-              <p className="wd-dashboard-course-title">
-                Full Stack software developer  </p>
-              <button> Go </button>
-            </div>
-          </Link>
-
-          <Link to="/Kambaz/Courses/1230/Home"
-                className="wd-dashboard-course-link" >
-            <img src="/images/reactjs.jpg" width={200} />
-            <div>
-              <h5> CS5700 Maths </h5>
-              <p className="wd-dashboard-course-title">
-                Full Stack software developer  </p>
-              <button> Go </button>
-            </div>
-          </Link>
-        </div>
+      <div
+        id="wd-dashboard-courses"
+        style={{ marginLeft: 35 }}
+      >
+        <Row
+          xs={1} sm={2} md={3} lg={4}
+          style={{ columnGap: 30, rowGap: 30 }}
+        >
+          {courses.map(({id, title}) => (
+            <Col key={id} style={{ maxWidth: 250 }}>
+              <Card className="h-100">
+                <Link
+                  to={`/Kambaz/Courses/${id}/Home`}
+                  className="text-decoration-none text-dark"
+                >
+                  <Card.Img
+                    variant="top"
+                    src="/images/reactjs.jpg"
+                    style={{ height: 140, objectFit: "cover" }}
+                  />
+                  <Card.Body className="d-flex flex-column">
+                    <Card.Title className="text-truncate">
+                      {title}
+                    </Card.Title>
+                    <Card.Text className="flex-grow-1 text-truncate">
+                      Full Stack software developer
+                    </Card.Text>
+                    <Button variant="primary" className="mt-auto">
+                      Go
+                    </Button>
+                  </Card.Body>
+                </Link>
+              </Card>
+            </Col>
+          ))}
+        </Row>
       </div>
     </div>
-);}
+  );
+}

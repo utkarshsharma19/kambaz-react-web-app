@@ -3,24 +3,14 @@ import CourseStatus from "./Status";
 
 export default function Home() {
   return (
-    <div id="wd-home">
-      <h2>Home</h2>
-      <table width="100%">
-        <colgroup>
-          <col />
-          <col width="220" />
-        </colgroup>
-        <tbody>
-          <tr style={{ verticalAlign: 'top' }}>
-            <td>
+    <div className="d-flex" id="wd-home">
+  <div className="flex-fill me-3">
+
               <Modules />
-            </td>
-            <td>
+            </div>
+            <div className="d-none d-xl-block">
               <CourseStatus />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+              </div>
+            </div>
   );
 }
