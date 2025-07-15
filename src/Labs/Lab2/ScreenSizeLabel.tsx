@@ -1,6 +1,6 @@
 export default function ScreenSizeLabel() {
     return (
-      <div id="wd-screen-size-label">
+      <div id="wd-screen-size-label" className="breakpoint-indicator">
         <div className="d-block d-sm-none">
           XS - Extra Small (&lt;576px)
         </div>

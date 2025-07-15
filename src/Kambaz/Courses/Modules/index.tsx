@@ -24,7 +24,8 @@ export default function Modules() {
             <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
+            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
+             border-0 border-start border-start-5 border-success p-3 ps-3">
               <div>
                 <BsGripVertical className="me-2 fs-3" />
                 LEARNING OBJECTIVES
@@ -58,7 +59,8 @@ export default function Modules() {
             <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
+            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
+             border-0 border-start border-start-5 border-success p-3 ps-3">
               <div>
                 <BsGripVertical className="me-2 fs-3" />
                 HTML BASICS
@@ -79,7 +81,8 @@ export default function Modules() {
               </div>
               <LessonControlButtons />
             </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
+            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
+             border-0 border-start border-start-5 border-success p-3 ps-3">
               <div>
                 <BsGripVertical className="me-2 fs-3" />
                 Lists: Ordered and Unordered
@@ -99,21 +102,24 @@ export default function Modules() {
             <ModuleControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
+          <ListGroup.Item   className="wd-lesson d-flex justify-content-between align-items-center
+             border-0 border-start border-start-5 border-success p-3 ps-3">
               <div>
                 <BsGripVertical className="me-2 fs-3" />
                 ADVANCED HTML
               </div>
               <LessonControlButtons />
             </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
+            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
+             border-0 border-start border-start-5 border-success p-3 ps-3">
               <div>
                 <BsGripVertical className="me-2 fs-3" />
                 Tables and Forms
               </div>
               <LessonControlButtons />
             </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
+            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
+             border-0 border-start border-start-5 border-success p-3 ps-3">
               <div>
                 <BsGripVertical className="me-2 fs-3" />
                 Semantic Elements

@@ -1,6 +1,7 @@
 import { FaPlus } from "react-icons/fa6";
 import GreenCheckmark from "./GreenCheckmark";
 import { Button, Dropdown } from "react-bootstrap";
+import { MdDoNotDisturbAlt } from "react-icons/md";
 
 export default function ModulesControls() {
   return (
@@ -10,7 +11,8 @@ export default function ModulesControls() {
         id="wd-collapse-all"
         variant="secondary"
         size="lg"
-        className="me-2"
+        className="me-2 text-dark"
+        style={{ backgroundColor: "grey", borderColor: "grey" }}
       >
         Collapse All
       </Button>
@@ -18,7 +20,8 @@ export default function ModulesControls() {
         id="wd-view-progress"
         variant="secondary"
         size="lg"
-        className="me-4"
+        className="me-4 text-dark"
+        style={{ backgroundColor: "grey", borderColor: "grey" }}
       >
         View Progress
       </Button>
@@ -43,9 +46,12 @@ export default function ModulesControls() {
             <GreenCheckmark /> Publish modules only
           </Dropdown.Item>
           <Dropdown.Item id="wd-unpublish-all-modules-and-items">
+          <MdDoNotDisturbAlt className="me-2 text-secondary" />
+
             Unpublish all modules and items
           </Dropdown.Item>
           <Dropdown.Item id="wd-unpublish-modules-only">
+          <MdDoNotDisturbAlt className="me-2 text-secondary" />
             Unpublish modules only
           </Dropdown.Item>
         </Dropdown.Menu>

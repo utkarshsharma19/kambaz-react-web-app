@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { IoCalendarOutline } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
@@ -6,6 +6,12 @@ import { FaInbox, FaRegCircleUser } from "react-icons/fa6";
 import ListGroup from "react-bootstrap/ListGroup";
 
 export default function KambazNavigation() {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  const isActive = (path: string) =>
+    currentPath.startsWith(path) ? "bg-white text-danger" : "text-white bg-black";
+
   return (
     <ListGroup
       id="wd-kambaz-navigation"
@@ -23,22 +29,22 @@ export default function KambazNavigation() {
         <img src="/images/NEU.png" width="75px" alt="NEU" />
       </ListGroup.Item>
 
-      {/* Account (icon white) */}
+      {/* Account */}
       <ListGroup.Item
         to="/Kambaz/Account"
         as={Link}
-        className="text-center border-0 bg-black text-white"
+        className={`text-center border-0 ${isActive("/Kambaz/Account")}`}
       >
-        <FaRegCircleUser className="fs-1 text-white" />
+        <FaRegCircleUser className="fs-1" />
         <br />
         Account
       </ListGroup.Item>
 
-      {/* Dashboard (icon red) */}
+      {/* Dashboard */}
       <ListGroup.Item
         to="/Kambaz/Dashboard"
         as={Link}
-        className="text-center border-0 bg-black text-white"
+        className={`text-center border-0 ${isActive("/Kambaz/Dashboard")}`}
       >
         <AiOutlineDashboard className="fs-1 text-danger" />
         <br />
@@ -47,9 +53,9 @@ export default function KambazNavigation() {
 
       {/* Courses */}
       <ListGroup.Item
-        to="/Kambaz/Courses/1234"
+        to="/Kambaz/Courses"
         as={Link}
-        className="text-center border-0 bg-black text-white"
+        className={`text-center border-0 ${isActive("/Kambaz/Courses")}`}
       >
         <LiaBookSolid className="fs-1 text-danger" />
         <br />
@@ -60,7 +66,7 @@ export default function KambazNavigation() {
       <ListGroup.Item
         to="/Kambaz/Calendar"
         as={Link}
-        className="text-center border-0 bg-black text-white"
+        className={`text-center border-0 ${isActive("/Kambaz/Calendar")}`}
       >
         <IoCalendarOutline className="fs-1 text-danger" />
         <br />
@@ -71,7 +77,7 @@ export default function KambazNavigation() {
       <ListGroup.Item
         to="/Kambaz/Inbox"
         as={Link}
-        className="text-center border-0 bg-black text-white"
+        className={`text-center border-0 ${isActive("/Kambaz/Inbox")}`}
       >
         <FaInbox className="fs-1 text-danger" />
         <br />
@@ -82,7 +88,7 @@ export default function KambazNavigation() {
       <ListGroup.Item
         to="/Labs"
         as={Link}
-        className="text-center border-0 bg-black text-white"
+        className={`text-center border-0 ${isActive("/Labs")}`}
       >
         <LiaCogSolid className="fs-1 text-danger" />
         <br />
