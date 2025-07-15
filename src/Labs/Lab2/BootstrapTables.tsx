@@ -1,4 +1,4 @@
-import Table from "../../Kambaz/Courses/People/Table";
+import Table from "react-bootstrap/Table";
 
 export default function BootstrapTables() {
     return (
