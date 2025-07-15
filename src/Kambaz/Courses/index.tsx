@@ -11,27 +11,27 @@ import PeopleTable from './People/Table';
 export default function Courses() {
   return (
     <div id="wd-courses">
-      {/* course header */}
+  
       <h2 className="text-danger">
         <FaAlignJustify className="me-4 fs-4 mb-1" />
         Course&nbsp;1234
       </h2>
       <hr />
 
-      {/* two-column layout */}
+    
       <div className="d-flex">
         {/* left nav (hidden on < md) */}
         <div className="d-none d-md-block pe-md-4">
           <CourseNavigation />
         </div>
 
-        {/* main panel */}
+
         <div className="flex-fill">
           <Routes>
-            {/* index route → /home */}
+     
             <Route index element={<Navigate to="home" replace />} />
 
-            {/* primary pages (lower-case paths are nicer URLs) */}
+      
             <Route path="home" element={<Home />} />
             <Route path="modules" element={<Modules />} />
             <Route path="piazza" element={<h2>Piazza</h2>} />
@@ -42,7 +42,7 @@ export default function Courses() {
             <Route path="grades" element={<h2>Grades</h2>} />
     
 
-            {/* assignment-detail editor */}
+        
             <Route
               path="assignments/:assignmentId"
               element={<AssignmentEditor />}

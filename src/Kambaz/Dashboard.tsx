@@ -1,4 +1,4 @@
-// src/Kambaz/Dashboard.tsx
+
 import { Link } from "react-router-dom";
 import { Row, Col, Card, Button } from "react-bootstrap";
 

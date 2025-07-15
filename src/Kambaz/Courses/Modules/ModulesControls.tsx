@@ -6,7 +6,7 @@ import { MdDoNotDisturbAlt } from "react-icons/md";
 export default function ModulesControls() {
   return (
     <div id="wd-modules-controls" className="text-nowrap">
-      {/* Collapse All and View Progress on left */}
+      
       <Button
         id="wd-collapse-all"
         variant="secondary"

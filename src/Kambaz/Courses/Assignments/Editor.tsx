@@ -1,11 +1,11 @@
-import React from "react";
+
 import { Form, Button } from "react-bootstrap";
 import { FaSave } from "react-icons/fa";
 import { Row, Col } from "react-bootstrap";
 export default function AssignmentEditor() {
   return (
     <Form id="wd-assignment-editor" className="p-4">
-    {/* Assignment Name (label on top, left-aligned) */}
+
     <Form.Group controlId="wd-name" className="mb-3">
       <Form.Label className="text-start w-100">Assignment Name</Form.Label>
       <Form.Control
@@ -14,7 +14,7 @@ export default function AssignmentEditor() {
       />
     </Form.Group>
 
-      {/* Description */}
+
       <Form.Group controlId="wd-description" className="mb-3">
         <Form.Control
           as="textarea"

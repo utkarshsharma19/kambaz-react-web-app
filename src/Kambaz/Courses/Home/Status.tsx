@@ -1,11 +1,10 @@
 import { MdDoNotDisturbAlt, MdHome, MdAnalytics} from "react-icons/md";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaPlay, FaBullhorn } from "react-icons/fa";
 import { BiImport } from "react-icons/bi";
 import { LiaFileImportSolid }              from "react-icons/lia";
 import { Button } from "react-bootstrap";
 import { IoNotificationsOutline }              from "react-icons/io5";
-// import { FaStream }        from "react-icons/fa6";
-{/* Find more icons */}
+
 export default function CourseStatus() {
  return (
    <div id="wd-course-status" style={{ width: "350px" }}>
@@ -26,17 +25,17 @@ export default function CourseStatus() {
        <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
         <MdHome className="me-2 fs-5" /> Choose Home Page
       </Button>
-      {/* <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
-        <FaStream className="me-2 fs-5" /> View Course Stream
-      </Button> */}
-      {/* <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
-        <BiBullhorn className="me-2 fs-5" /> New Announcement
-      </Button> */}
+    <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+    <FaPlay className="me-2 fs-5" />  View Course Stream
+      </Button> 
+       <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
+         <FaBullhorn className="me-2 fs-5" /> New Announcement
+      </Button> 
       <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
         <MdAnalytics className="me-2 fs-5" /> New Analytics
       </Button>
       <Button variant="secondary" size="lg" className="w-100 mt-1 text-start">
         <IoNotificationsOutline className="me-2 fs-5" /> View Course Notifications
       </Button>
-     {/* Complete the rest of the buttons */}
+     
    </div> );}
