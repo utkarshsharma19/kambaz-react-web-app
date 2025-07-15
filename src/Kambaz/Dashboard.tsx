@@ -1,17 +1,20 @@
 
 import { Link } from "react-router-dom";
 import { Row, Col, Card, Button } from "react-bootstrap";
+import blueCard from "../assets/blue_card.jpeg";
+import greyCard from "../assets/Grey.jpg";
+import teslaBot from "../assets/Tesla_Bot_2023.jpg";
 
 export default function Dashboard() {
   const courses = [
-    { id: "1234", title: "CS1234 React JS",       img: "../assets/blue_card.jpeg" },
-    { id: "1000", title: "CS1000 Node JS",        img: "../assets/Grey.jpg" },
-    { id: "2000", title: "CS2000 Spring Boot",    img: "../assets/Tesla_Bot_2023.jpg" },
-    { id: "3000", title: "CS3000 Flutter",        img: "../assets/blue_card.jpeg" },
-    { id: "4000", title: "CS4000 Blockchain",     img: "../assets/Grey.jpg" },
-    { id: "5000", title: "CS5000 AI",             img: "../assets/Grey.jpg" },
-    { id: "6000", title: "CS6000 Physics JS",     img: "../assets/blue_card.jpeg" },
-    { id: "5700", title: "CS5700 Mathematics",    img: "../assets/blue_card.jpeg" },
+    { id: "1234", title: "CS1234 React JS",       img: blueCard },
+    { id: "1000", title: "CS1000 Node JS",        img: greyCard },
+    { id: "2000", title: "CS2000 Spring Boot",    img: teslaBot },
+    { id: "3000", title: "CS3000 Flutter",        img: blueCard },
+    { id: "4000", title: "CS4000 Blockchain",     img:  greyCard },
+    { id: "5000", title: "CS5000 AI",             img: blueCard },
+    { id: "6000", title: "CS6000 Physics JS",     img:  greyCard },
+    { id: "5700", title: "CS5700 Mathematics",    img:teslaBot },
   ];
 
   return (
