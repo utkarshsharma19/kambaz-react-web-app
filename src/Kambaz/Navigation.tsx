@@ -4,6 +4,7 @@ import { IoCalendarOutline } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
 import { FaInbox, FaRegCircleUser } from "react-icons/fa6";
 import ListGroup from "react-bootstrap/ListGroup";
+import NEULogo from "../assets/NEU.jpg";
 
 export default function KambazNavigation() {
   const location = useLocation();
@@ -26,7 +27,7 @@ export default function KambazNavigation() {
         target="_blank"
         className="bg-black border-0 text-center"
       >
-        <img src="/images/NEU.png" width="75px" alt="NEU" />
+        <img src = {NEULogo} width="75px" alt="NEU" />
       </ListGroup.Item>
 
       {/* Account */}
