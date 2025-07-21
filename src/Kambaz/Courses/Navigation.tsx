@@ -1,31 +1,38 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 export default function CourseNavigation() {
+  /* course id comes from the route:  /Kambaz/Courses/:cid/... */
+  const { cid = "" } = useParams<{ cid: string }>();
   const { pathname } = useLocation();
 
-  const links = [
-    { label: "Home", path: "/Kambaz/Courses/1234/Home", id: "wd-course-home-link" },
-    { label: "Modules", path: "/Kambaz/Courses/1234/Modules", id: "wd-course-modules-link" },
-    { label: "Piazza", path: "/Kambaz/Courses/1234/Piazza", id: "wd-course-piazza-link" },
-    { label: "Zoom", path: "/Kambaz/Courses/1234/Zoom", id: "wd-course-zoom-link" },
-    { label: "Assignments", path: "/Kambaz/Courses/1234/Assignments", id: "wd-course-assignments-link" },
-    { label: "Quizzes", path: "/Kambaz/Courses/1234/Quizzes", id: "wd-course-quizzes-link" },
-    { label: "Grades", path: "/Kambaz/Courses/1234/Grades", id: "wd-course-grades-link" },
-    { label: "People", path: "/Kambaz/Courses/1234/People", id: "wd-course-people-link" },
+  /** list of tabs we want to show (label ⇢ sub‑route) */
+  const tabs = [
+    { label: "Home",        slug: "Home" },
+    { label: "Modules",     slug: "Modules" },
+    { label: "Piazza",      slug: "Piazza" },
+    { label: "Zoom",        slug: "Zoom" },
+    { label: "Assignments", slug: "Assignments" },
+    { label: "Quizzes",     slug: "Quizzes" },
+    { label: "Grades",      slug: "Grades" },
+    { label: "People",      slug: "People" },
   ];
 
   return (
     <div id="wd-courses-navigation" className="list-group fs-5 rounded-0">
-      {links.map((link) => {
-        const isActive = pathname.includes(link.label);
+      {tabs.map(({ label, slug }) => {
+        const to = `/Kambaz/Courses/${cid}/${slug}`;
+        const isActive = pathname.startsWith(to);          // precise match
         return (
           <Link
-            key={link.path}
-            to={link.path}
-            id={link.id}
-            className={`list-group-item border border-0 text-danger ${isActive ? "bg-white" : ""}`}
+            key={slug}
+            to={to}
+            id={`wd-course-${slug.toLowerCase()}-link`}
+            className={
+              "list-group-item border-0 text-danger" +
+              (isActive ? " bg-white" : "")
+            }
           >
-            {link.label}
+            {label}
           </Link>
         );
       })}

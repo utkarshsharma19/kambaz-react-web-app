@@ -1,7 +1,7 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams, useLocation } from 'react-router-dom';
 import { FaAlignJustify } from 'react-icons/fa';   // ← added
 import CourseNavigation from './Navigation';
-
+import { courses } from "../Database/index";
 import Home from './Home';
 import Modules from './Modules';
 import Assignments from './Assignments';
@@ -9,12 +9,16 @@ import AssignmentEditor from './Assignments/Editor';
 import PeopleTable from './People/Table';
 
 export default function Courses() {
+  const { cid } = useParams();
+  const course = courses.find((course) => course._id === cid);
+  const { pathname } = useLocation();
   return (
     <div id="wd-courses">
   
       <h2 className="text-danger">
         <FaAlignJustify className="me-4 fs-4 mb-1" />
-        Course&nbsp;1234
+        {course && course.name} &gt; {pathname.split("/")[4]}
+
       </h2>
       <hr />
 

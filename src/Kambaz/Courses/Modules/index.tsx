@@ -1,11 +1,15 @@
-
 import ListGroup from "react-bootstrap/ListGroup";
 import ModulesControls from "./ModulesControls";
 import ModuleControlButtons from "./ModuleControlButtons";
 import LessonControlButtons from "./LessonControlButtons";
 import { BsGripVertical } from "react-icons/bs";
+import { useParams } from "react-router-dom";
+import * as db from "../../Database/index";
 
 export default function Modules() {
+  const { cid } = useParams();
+  const modules = db.modules.filter((module: any) => module.course === cid);
+
   return (
     <div>
       <ModulesControls />
@@ -14,209 +18,35 @@ export default function Modules() {
       <br />
 
       <ListGroup className="rounded-0" id="wd-modules">
-        {/* Week 1 */}
-        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
-          <div className="wd-title d-flex justify-content-between align-items-center p-3 ps-2 bg-secondary">
-            <div>
-              <BsGripVertical className="me-2 fs-3" />
-              Week 1
+        {modules.map((module: any, index: number) => (
+          <ListGroup.Item key={index} className="wd-module p-0 mb-5 fs-5 border-gray">
+            <div className="wd-title d-flex justify-content-between align-items-center p-3 ps-2 bg-secondary">
+              <div>
+                <BsGripVertical className="me-2 fs-3" />
+                {module.name}
+              </div>
+              <ModuleControlButtons />
             </div>
-            <ModuleControlButtons />
-          </div>
-          <ListGroup className="wd-lessons rounded-0">
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
-             border-0 border-start border-start-5 border-success p-3 ps-3">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                LEARNING OBJECTIVES
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Introduction to the course
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Learn what is Web Development
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-          </ListGroup>
-        </ListGroup.Item>
 
-        {/* Week 2 */}
-        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
-          <div className="wd-title d-flex justify-content-between align-items-center p-3 ps-2 bg-secondary">
-            <div>
-              <BsGripVertical className="me-2 fs-3" />
-              Week 2
-            </div>
-            <ModuleControlButtons />
-          </div>
-          <ListGroup className="wd-lessons rounded-0">
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
-             border-0 border-start border-start-5 border-success p-3 ps-3">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                HTML BASICS
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                HTML Tags
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Headings and Paragraphs
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
-             border-0 border-start border-start-5 border-success p-3 ps-3">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Lists: Ordered and Unordered
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-          </ListGroup>
-        </ListGroup.Item>
-
-        {/* Week 3 */}
-        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
-          <div className="wd-title d-flex justify-content-between align-items-center p-3 ps-2 bg-secondary">
-            <div>
-              <BsGripVertical className="me-2 fs-3" />
-              Week 3
-            </div>
-            <ModuleControlButtons />
-          </div>
-          <ListGroup className="wd-lessons rounded-0">
-          <ListGroup.Item   className="wd-lesson d-flex justify-content-between align-items-center
-             border-0 border-start border-start-5 border-success p-3 ps-3">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                ADVANCED HTML
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
-             border-0 border-start border-start-5 border-success p-3 ps-3">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Tables and Forms
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center
-             border-0 border-start border-start-5 border-success p-3 ps-3">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Semantic Elements
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Embedding Images and Videos
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-          </ListGroup>
-        </ListGroup.Item>
-
-        {/* Week 4 */}
-        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
-          <div className="wd-title d-flex justify-content-between align-items-center p-3 ps-2 bg-secondary">
-            <div>
-              <BsGripVertical className="me-2 fs-3" />
-              Week 4
-            </div>
-            <ModuleControlButtons />
-          </div>
-          <ListGroup className="wd-lessons rounded-0">
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                CSS INTRO
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                CSS Selectors
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Colors and Fonts
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Box Model
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-          </ListGroup>
-        </ListGroup.Item>
-
-        {/* Week 5 */}
-        <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
-          <div className="wd-title d-flex justify-content-between align-items-center p-3 ps-2 bg-secondary">
-            <div>
-              <BsGripVertical className="me-2 fs-3" />
-              Week 5
-            </div>
-            <ModuleControlButtons />
-          </div>
-          <ListGroup className="wd-lessons rounded-0">
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                ADVANCED CSS
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Flexbox
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Grid Layout
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-            <ListGroup.Item className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-1">
-              <div>
-                <BsGripVertical className="me-2 fs-3" />
-                Media Queries
-              </div>
-              <LessonControlButtons />
-            </ListGroup.Item>
-          </ListGroup>
-        </ListGroup.Item>
+            {module.lessons && (
+              <ListGroup className="wd-lessons rounded-0">
+                {module.lessons.map((lesson: any, idx: number) => (
+                  <ListGroup.Item
+                    key={idx}
+                    className="wd-lesson d-flex justify-content-between align-items-center
+                               p-3 ps-3 border-0 border-start border-start-5 border-success"
+                  >
+                    <div>
+                      <BsGripVertical className="me-2 fs-3" />
+                      {lesson.name}
+                    </div>
+                    <LessonControlButtons />
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            )}
+          </ListGroup.Item>
+        ))}
       </ListGroup>
     </div>
   );
