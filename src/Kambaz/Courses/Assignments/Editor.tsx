@@ -17,7 +17,16 @@ export default function AssignmentEditor() {
       due: "",
       availableFrom: "",
       availableUntil: "",
+      onlineEntryOptions: [] as string[],
     };
+
+  const onlineOptions = [
+    "Text Entry",
+    "Website URL",
+    "Media Recordings",
+    "Student Annotation",
+    "File Upload",
+  ];
 
   return (
     <Form id="wd-assignment-editor" className="p-4">
@@ -40,7 +49,6 @@ export default function AssignmentEditor() {
         />
       </Form.Group>
 
-      {/* Points */}
       <Form.Group as={Row} controlId="wd-points" className="mb-3 align-items-center">
         <Form.Label column sm={3}>
           Points
@@ -87,14 +95,10 @@ export default function AssignmentEditor() {
         </Col>
       </Form.Group>
 
-      {/* Submission Type + Options */}
       <Row className="mb-4 align-items-start">
-        {/* label on the left */}
         <Col md={3}>
           <Form.Label>Submission Type</Form.Label>
         </Col>
-
-        {/* box on the right */}
         <Col md={9}>
           <div className="border p-3 rounded">
             <Form.Select defaultValue="online" className="mb-3">
@@ -104,18 +108,13 @@ export default function AssignmentEditor() {
 
             <fieldset className="ps-3 border-start border-success">
               <legend className="small">Online entry options</legend>
-              {[
-                "Text Entry",
-                "Website URL",
-                "Media Recordings",
-                "Student Annotation",
-                "File Upload",
-              ].map((opt) => (
+              {onlineOptions.map((opt) => (
                 <Form.Check
                   key={opt}
                   type="checkbox"
                   label={opt}
                   className="mb-2"
+                  defaultChecked={assignment.onlineEntryOptions.includes(opt)}
                 />
               ))}
             </fieldset>
@@ -123,17 +122,12 @@ export default function AssignmentEditor() {
         </Col>
       </Row>
 
-      {/* Assign / Due / Available */}
       <Row className="mb-4 align-items-start">
-        {/* “Assign” label */}
         <Col md={3}>
           <Form.Label>Assign</Form.Label>
         </Col>
-
-        {/* Box containing all the assign-related fields */}
         <Col md={9}>
           <div className="border p-3 rounded">
-            {/* Assign To */}
             <Form.Group controlId="wd-assign-to" className="mb-3">
               <Form.Label>Assign To</Form.Label>
               <Form.Select defaultValue={assignment.assignTo}>
@@ -142,13 +136,11 @@ export default function AssignmentEditor() {
               </Form.Select>
             </Form.Group>
 
-            {/* Due Date */}
             <Form.Group controlId="wd-due-date" className="mb-3">
               <Form.Label>Due Date</Form.Label>
               <Form.Control type="date" defaultValue={assignment.due} />
             </Form.Group>
 
-            {/* Available From & Until on same line */}
             <Row>
               <Form.Group as={Col} controlId="wd-available-from" className="mb-3">
                 <Form.Label>Available From</Form.Label>
@@ -163,7 +155,6 @@ export default function AssignmentEditor() {
         </Col>
       </Row>
 
-      {/* Save Button */}
       <div className="d-flex justify-content-end mt-4">
         <Button variant="secondary" className="me-2">
           Cancel
