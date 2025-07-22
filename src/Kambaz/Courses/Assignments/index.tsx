@@ -68,8 +68,8 @@ export default function Assignments() {
             <span className="fw-bold">ASSIGNMENTS</span>
           </div>
           <div className="d-flex align-items-center">
-            <Badge bg="light" text="dark" pill className="me-3">
-              {assignment.length * 10}% of Total
+            <Badge bg="transparent" text="dark" pill   className="me-3 border border-1 border-dark fw-normal">
+              40% of Total
             </Badge>
             <FaPlus className="text-dark me-3 fs-5" style={{ cursor: "pointer" }} />
             <IoEllipsisVertical className="text-dark fs-5" style={{ cursor: "pointer" }} />
