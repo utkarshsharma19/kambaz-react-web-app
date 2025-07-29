@@ -17,40 +17,57 @@ import {
 } from "./reducer";
 
 export default function Modules() {
-  const { cid } = useParams();
+  const { cid } = useParams<{ cid: string }>();
 
   /* Redux hooks */
   const { modules } = useSelector((state: any) => state.modulesReducer);
-  const dispatch   = useDispatch();
+  const dispatch = useDispatch();
 
-  /* local state only for the modal text + visibility */
+  /* modal state */
   const [moduleName, setModuleName] = useState("");
-  const [showModal, setShowModal]   = useState(false);
-  const reset = () => setModuleName("");
+  const [moduleDesc, setModuleDesc] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  const reset = () => {
+    setModuleName("");
+    setModuleDesc("");
+  };
+
   return (
     <div className="wd-modules">
-      {/* toolbar with +Module */}
+      {/* toolbar */}
       <ModulesControls openModal={() => setShowModal(true)} />
 
-      {/* modal dialog for new module */}
+      {/* modal */}
       <ModuleEditor
         show={showModal}
-        handleClose={() => { 
+        handleClose={() => {
           reset();
-          setShowModal(false)}}
+          setShowModal(false);
+        }}
         dialogTitle="Add Module"
         moduleName={moduleName}
         setModuleName={setModuleName}
+        moduleDesc={moduleDesc}
+        setModuleDesc={setModuleDesc}
         addModule={() => {
-          dispatch(addModule({ name: moduleName, course: cid! }));
-          setModuleName("");
+          dispatch(
+            addModule({
+              name: moduleName,
+              description: moduleDesc,
+              course: cid!,
+            })
+          );
+          reset();
           setShowModal(false);
         }}
       />
 
-      <br /><br /><br />
+      <br />
+      <br />
+      <br />
 
-      {/* list of modules filtered by course */}
+      {/* list of modules */}
       <ListGroup className="rounded-0" id="wd-modules">
         {modules
           .filter((m: any) => m.course === cid)
@@ -60,10 +77,19 @@ export default function Modules() {
               className="wd-module p-0 mb-5 fs-5 border-gray"
             >
               <div className="wd-title d-flex justify-content-between align-items-center p-3 ps-2 bg-secondary">
-                {/* name or editable input */}
                 <div>
                   <BsGripVertical className="me-2 fs-3" />
-                  {!module.editing && module.name}
+                  {!module.editing && (
+                    <>
+                      <strong>{module.name}</strong>
+                      {module.description?.trim() && (
+                        <span className="text-muted fst-italic ms-3">
+                          — {module.description}
+                        </span>
+                      )}
+                    </>
+                  )}
+
                   {module.editing && (
                     <FormControl
                       className="w-50 d-inline-block"
@@ -76,9 +102,7 @@ export default function Modules() {
                       }
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          dispatch(
-                            updateModule({ ...module, editing: false })
-                          );
+                          dispatch(updateModule({ ...module, editing: false }));
                         }
                       }}
                     />
@@ -99,8 +123,7 @@ export default function Modules() {
                   {module.lessons.map((lesson: any) => (
                     <ListGroup.Item
                       key={lesson._id}
-                      className="wd-lesson d-flex justify-content-between align-items-center
-                                 p-3 ps-3 border-0 border-start border-start-5 border-success"
+                      className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-3 border-0 border-start border-start-5 border-success"
                     >
                       {lesson.name}
                       <LessonControlButtons />
