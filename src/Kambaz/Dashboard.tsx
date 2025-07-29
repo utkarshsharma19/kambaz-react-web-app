@@ -15,7 +15,7 @@ import {
   deleteCourse,
   emptyCourse,
 } from "./Courses/reducer";
-import * as db from "./Database";               // for enrollments
+import * as db from "./Database/index";               // for enrollments
 
 export default function Dashboard() {
   const dispatch = useDispatch();

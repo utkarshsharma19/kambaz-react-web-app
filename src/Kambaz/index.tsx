@@ -4,11 +4,12 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 import KambazNavigation from "./Navigation";
-import Account from "./Account";
-import Dashboard, { emptyCourse } from "./Dashboard";
-import Courses from "./Courses";
+import Account from "./Account/index";
+import Dashboard from "./Dashboard";
+import Courses from "./Courses/index";
 import ProtectedRoute from "./Account/ProtectedRoute";
-import * as db from "./Database";
+import * as db from "./Database/index";
+import { emptyCourse } from "./Courses/reducer";
 
 export default function Kambaz() {
   /* shared local state for now */
