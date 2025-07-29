@@ -26,7 +26,7 @@ export default function Modules() {
   /* local state only for the modal text + visibility */
   const [moduleName, setModuleName] = useState("");
   const [showModal, setShowModal]   = useState(false);
-
+  const reset = () => setModuleName("");
   return (
     <div className="wd-modules">
       {/* toolbar with +Module */}
@@ -35,7 +35,9 @@ export default function Modules() {
       {/* modal dialog for new module */}
       <ModuleEditor
         show={showModal}
-        handleClose={() => setShowModal(false)}
+        handleClose={() => { 
+          reset();
+          setShowModal(false)}}
         dialogTitle="Add Module"
         moduleName={moduleName}
         setModuleName={setModuleName}
