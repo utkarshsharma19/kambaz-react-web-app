@@ -7,8 +7,9 @@ import todosReducer from "../Lab4/ReduxExamples/todos/todosReducer";
 import modulesReducer from "../../Kambaz/Courses/Modules/reducer"
 import accountReducer from "../../Kambaz/Account/reducer"
 import coursesReducer from "../../Kambaz/Courses/reducer";
+import enrollmentReducer from "../../Kambaz/Courses/Modules/enrollmentReducer";
 // import enrollmentsReducer from "../../Kambaz/Courses/enrollmentReducer";
 const store = configureStore({
   reducer: { helloReducer,
-counterReducer, addReducer, todos: todosReducer,   modulesReducer, accountReducer,     coursesReducer}});
+counterReducer, addReducer, todos: todosReducer,   modulesReducer, accountReducer,     coursesReducer, enrollmentReducer}});
 export default store;

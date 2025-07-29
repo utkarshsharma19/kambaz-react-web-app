@@ -10,6 +10,7 @@ import Courses from "./Courses/index";
 import ProtectedRoute from "./Account/ProtectedRoute";
 import * as db from "./Database/index";
 import { emptyCourse } from "./Courses/reducer";
+import ProtectedCourseRoute from "./Account/ProtectedCourseRoute";
 
 export default function Kambaz() {
   /* shared local state for now */
@@ -58,7 +59,7 @@ export default function Kambaz() {
                 </ProtectedRoute>
               }
             />
-
+<Route element={<ProtectedCourseRoute />}>
             <Route
               path="Courses/:cid/*"
               element={
@@ -67,6 +68,7 @@ export default function Kambaz() {
                 </ProtectedRoute>
               }
             />
+            </Route>
 
             {/* public extras */}
             <Route path="Calendar" element={<h1>Calendar</h1>} />
