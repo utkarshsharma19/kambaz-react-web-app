@@ -40,8 +40,8 @@ const coursesSlice = createSlice({
       state.draft = action.payload;
     },
 
-    addCourse: (state) => {
-      state.courses.push({ ...state.draft, _id: uuidv4() });
+    addCourse: (state, { payload }: PayloadAction<CourseType>) => {
+      state.courses.push({ ...payload, _id: uuidv4() });
       state.draft = emptyCourse();
     },
 
