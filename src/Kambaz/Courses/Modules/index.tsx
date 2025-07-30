@@ -76,9 +76,18 @@ export default function Modules() {
               key={module._id}
               className="wd-module p-0 mb-5 fs-5 border-gray"
             >
-              <div className="wd-title d-flex justify-content-between align-items-center p-3 ps-2 bg-secondary">
-                <div>
-                  <BsGripVertical className="me-2 fs-3" />
+              {/* ─── header row ───────────────────────────────────── */}
+              <div
+                className="wd-title d-flex flex-nowrap justify-content-between align-items-start
+                           p-3 ps-2 bg-secondary"
+              >
+                {/* left: drag‑handle + name + description */}
+                <div
+                  className="d-flex align-items-start flex-grow-1"
+                  style={{ overflowWrap: "anywhere" }}
+                >
+                  <BsGripVertical className="me-2 fs-3 flex-shrink-0" />
+
                   {!module.editing && (
                     <>
                       <strong>{module.name}</strong>
@@ -109,12 +118,14 @@ export default function Modules() {
                   )}
                 </div>
 
-                {/* pencil / trash */}
-                <ModuleControlButtons
-                  moduleId={module._id}
-                  deleteModule={(id) => dispatch(deleteModule(id))}
-                  editModule={(id) => dispatch(editModule(id))}
-                />
+                {/* right: icon buttons */}
+                <div className="flex-shrink-0 ms-3 d-flex align-items-center">
+                  <ModuleControlButtons
+                    moduleId={module._id}
+                    deleteModule={(id) => dispatch(deleteModule(id))}
+                    editModule={(id) => dispatch(editModule(id))}
+                  />
+                </div>
               </div>
 
               {/* lessons (unchanged) */}
@@ -123,7 +134,8 @@ export default function Modules() {
                   {module.lessons.map((lesson: any) => (
                     <ListGroup.Item
                       key={lesson._id}
-                      className="wd-lesson d-flex justify-content-between align-items-center p-3 ps-3 border-0 border-start border-start-5 border-success"
+                      className="wd-lesson d-flex justify-content-between align-items-center
+                                 p-3 ps-3 border-0 border-start border-start-5 border-success"
                     >
                       {lesson.name}
                       <LessonControlButtons />

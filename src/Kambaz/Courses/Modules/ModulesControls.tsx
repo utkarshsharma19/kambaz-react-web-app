@@ -11,21 +11,50 @@ export default function ModulesControls({
 }) {
   return (
     <div id="wd-modules-controls" className="text-nowrap">
-      {/* Collapse & Progress buttons (omitted) */}
-      <Button variant="secondary" size="lg" className="me-2 text-dark" id="wd-collapse-all">
+      {/* Collapse & Progress buttons */}
+      <Button
+        variant="secondary"
+        size="lg"
+        className="me-2 text-dark"
+        id="wd-collapse-all"
+      >
         Collapse All
       </Button>
-      <Button variant="secondary" size="lg" className="me-4 text-dark" id="wd-view-progress">
+      <Button
+        variant="secondary"
+        size="lg"
+        className="me-4 text-dark"
+        id="wd-view-progress"
+      >
         View Progress
       </Button>
 
-      {/* Publish dropdown (omitted) */}
+      {/* Publish dropdown */}
       <Dropdown className="float-end me-2">
         <Dropdown.Toggle variant="secondary" size="lg" id="wd-publish-all-btn">
           <GreenCheckmark /> Publish All
         </Dropdown.Toggle>
         <Dropdown.Menu>
-          {/* ...items omitted for brevity */}
+          <Dropdown.Item id="wd-publish-all">
+            <GreenCheckmark className="me-2" />
+            Publish All
+          </Dropdown.Item>
+
+          <Dropdown.Item id="wd-publish-all-modules-and-items">
+            <GreenCheckmark className="me-2" />
+            Publish all modules and items
+          </Dropdown.Item>
+
+          <Dropdown.Item id="wd-publish-modules-only">
+            <GreenCheckmark className="me-2" />
+            Publish modules only
+          </Dropdown.Item>
+
+          <Dropdown.Item id="wd-unpublish-all-modules-and-items">
+            <MdDoNotDisturbAlt className="me-2 text-secondary" />
+            Unpublish all modules and items
+          </Dropdown.Item>
+
           <Dropdown.Item id="wd-unpublish-modules-only">
             <MdDoNotDisturbAlt className="me-2 text-secondary" />
             Unpublish modules only
