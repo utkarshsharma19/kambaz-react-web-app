@@ -9,14 +9,25 @@ import {
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  setDraft,
   addCourse,
-  updateCourse,
+  updateCourse as updateCourseAction,
   deleteCourse,
+  setDraft,
 } from "./Courses/reducer";
 import { toggle } from "./Courses/Modules/enrollmentReducer";
 import { v4 as uuidv4 } from "uuid";
 import * as React from "react";
+
+/* ---------- draft helper ---------- */
+const emptyCourse = () => ({
+  _id: "0",
+  name: "",
+  number: "",
+  startDate: "",
+  endDate: "",
+  image: "/images/reactjs.jpg",
+  description: "",
+});
 
 /* ------------------------------------------------------------ */
 
@@ -32,23 +43,25 @@ export default function Dashboard() {
   /* ---------- local UI ---------- */
   const [showAll, setShowAll] = React.useState(false);
 
-  /* ---------- New‑course draft ---------- */
-  const [course, setCourse] = React.useState<any>({
-    _id: "0",
-    name: "New Course",
-    number: "New Number",
-    startDate: "2023-09-10",
-    endDate: "2023-12-15",
-    image: "/images/reactjs.jpg",
-    description: "New Description",
-  });
+  /* ---------- New / Edit draft ---------- */
+  const [course, setCourse] = React.useState<any>(emptyCourse());
 
+  /* ---------- handlers ---------- */
   const addNewCourse = () => {
     const newCourse = { ...course, _id: uuidv4() };
     dispatch(addCourse(newCourse));
-    /* reset the form */
-    setCourse({ ...course, _id: "0", name: "", description: "" });
+    setCourse(emptyCourse());
   };
+
+  const updateCourse = () => {
+    if (course._id === "0") return; // nothing selected
+    dispatch(setDraft(course))
+    dispatch(updateCourseAction(course));
+    setCourse(emptyCourse());
+  };
+
+  const selectCourse = (c: any) => {setCourse(c);
+    dispatch(setDraft(c));}
 
   /* ---------- helpers ---------- */
   const isEnrolled = (courseId: string) =>
@@ -77,12 +90,20 @@ export default function Dashboard() {
       </h1>
       <hr />
 
-      {/* -------- New‑course form -------- */}
+      {/* -------- New / Edit form -------- */}
       <h5 className="d-flex align-items-center">
         New&nbsp;Course
         <Button
+          variant="warning"
+          className="ms-auto me-2"
+          id="wd-update-course-click"
+          disabled={course._id === "0"}
+          onClick={updateCourse}
+        >
+          Update
+        </Button>
+        <Button
           variant="primary"
-          className="ms-auto"
           id="wd-add-new-course-click"
           onClick={addNewCourse}
         >
@@ -164,9 +185,10 @@ export default function Dashboard() {
                       <Button
                         size="sm"
                         variant="warning"
+                        id="wd-edit-course-click"
                         onClick={(e) => {
                           e.preventDefault();
-                          dispatch(setDraft(c));
+                          selectCourse(c); // copy into form
                         }}
                       >
                         Edit
