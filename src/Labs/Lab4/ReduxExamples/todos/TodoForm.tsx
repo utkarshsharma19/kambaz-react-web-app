@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { ListGroup, Button, FormControl } from "react-bootstrap";
 import { addTodo, updateTodo, setTodo } from "./todosReducer"; // ← matches file name
 
-export default function TodoForm() {
+export default function TodoForm() {  1 
   const dispatch = useDispatch();
-  const todo = useSelector((state: any) => state.todos.todo);   // ← state.todos…
+  const todo = useSelector((state: any) => state.todosReducer.todo);   // ← state.todos…
 
   return (
     <ListGroup.Item className="d-flex align-items-center gap-2">
@@ -19,6 +19,7 @@ export default function TodoForm() {
       <Button
         id="wd-add-todo-click"
         variant="primary"
+        disabled={!todo.title.trim()}  
         onClick={() => dispatch(addTodo(todo))}
       >
         Add

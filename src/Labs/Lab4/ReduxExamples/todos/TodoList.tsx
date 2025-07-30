@@ -1,4 +1,4 @@
-import ListGroup from "react-bootstrap/ListGroup";
+import { ListGroup } from "react-bootstrap"; 
 import TodoForm from "./TodoForm";
 import TodoItem from "./TodoItem";
 import { useSelector } from "react-redux";
@@ -10,7 +10,7 @@ export default function TodoList() {
       <ListGroup>
         <TodoForm />
         {todos.map((todo: any) => (
-          <TodoItem todo={todo} />
+          <TodoItem key={todo.id} todo={todo} />
         ))}
       </ListGroup>
       <hr/>

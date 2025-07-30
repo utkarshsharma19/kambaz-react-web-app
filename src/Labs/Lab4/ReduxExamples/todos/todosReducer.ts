@@ -2,10 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   todos: [
-    { id: "1", title: "Learn React" },
-    { id: "2", title: "Learn Node" },
+    { id: "1", title: "Learn React", done: false },
+    { id: "2", title: "Learn Node",  done: false },
   ],
-  todo: { title: "Learn Mongo" },
+  todo: { id: "", title: "" },   // ← draft always has id field
 };
 
 const todosSlice = createSlice({
@@ -14,7 +14,7 @@ const todosSlice = createSlice({
   reducers: {
     addTodo: (state, action) => {
       state.todos.push({ ...action.payload, id: Date.now().toString() });
-      state.todo = { title: "" };
+      state.todo = {  id: "", title: "" , done: false};
     },
     deleteTodo: (state, action) => {
       state.todos = state.todos.filter((t) => t.id !== action.payload);
@@ -23,7 +23,7 @@ const todosSlice = createSlice({
       state.todos = state.todos.map((t) =>
         t.id === action.payload.id ? action.payload : t
       );
-      state.todo = { title: "" };
+      state.todo = {  id: "", title: "" , done: false};
     },
     setTodo: (state, action) => {
       state.todo = action.payload;

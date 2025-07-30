@@ -1,14 +1,33 @@
 import React, { useState } from "react";
+import { Button } from "react-bootstrap";
+
 export default function Counter() {
-    const [count, setCount] = useState(7);
-  console.log(count);
+  const [count, setCount] = useState(7);
+
   return (
     <div id="wd-counter-use-state">
       <h2>Counter: {count}</h2>
-      <button
-        onClick={() =>  setCount(count + 1)}
-        id="wd-counter-up-click">Up</button>
-      <button
+
+      {/* green “Up” button */}
+      <Button
+        variant="success"
+        id="wd-counter-up-click"
+        className="me-2"
+        onClick={() => setCount(count + 1)}
+      >
+        Up
+      </Button>
+
+      {/* red “Down” button */}
+      <Button
+        variant="danger"
+        id="wd-counter-down-click"
         onClick={() => setCount(count - 1)}
-        id="wd-counter-down-click">Down</button>
-<hr/></div>);}
+      >
+        Down
+      </Button>
+
+      <hr />
+    </div>
+  );
+}

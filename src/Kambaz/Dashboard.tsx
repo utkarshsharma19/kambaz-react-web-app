@@ -4,9 +4,9 @@ import {
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  setDraft, addCourse, updateCourse, deleteCourse, emptyCourse,
+  setDraft, addCourse, updateCourse, deleteCourse,
 } from "./Courses/reducer";
-import { toggle } from "./Courses/Modules/enrollmentReducer";  // NEW
+import { toggle } from "./Courses/Modules/enrollmentReducer";
 import * as React from "react";
 
 export default function Dashboard() {
@@ -15,18 +15,20 @@ export default function Dashboard() {
   /* Redux */
   const { currentUser } = useSelector((s: any) => s.accountReducer);
   const { courses, draft } = useSelector((s: any) => s.coursesReducer);
-  const { enrollments = [] } = useSelector((s: any) => s.enrollmentReducer ?? {});
+  const { enrollments = [] } =
+    useSelector((s: any) => s.enrollmentReducer ?? {});
 
-  /* local UI state */
+  /* local UI */
   const [showAll, setShowAll] = React.useState(false);
 
   /* helpers */
   const isEnrolled = (courseId: string) =>
-    !!currentUser && enrollments.some(
-      (e: any) => e.user === currentUser._id && e.course === courseId
-    );
+    !!currentUser &&
+    enrollments.some((e: any) => e.user === currentUser._id && e.course === courseId);
 
-  const visibleCourses = showAll ? courses : courses.filter(c => isEnrolled(c._id));
+  const visibleCourses = showAll
+    ? courses
+    : courses.filter((c) => isEnrolled(c._id));
 
   return (
     <div id="wd-dashboard" style={{ marginLeft: 35 }}>
@@ -42,8 +44,8 @@ export default function Dashboard() {
       </h1>
       <hr />
 
-      {/* ------------- course creation UI (unchanged) ------------- */}
-      {/* ...same add / update / form code you already have ... */}
+      {/* course‑creation form (unchanged) */}
+      {/* … */}
 
       <h2 className="text-start">
         {showAll ? "All Courses" : "My Courses"} ({visibleCourses.length})
@@ -57,6 +59,8 @@ export default function Dashboard() {
           return (
             <Col key={c._id} style={{ maxWidth: 250 }}>
               <Card className="h-100">
+
+                {/* image + title + description */}
                 {enrolled ? (
                   <Link
                     to={`/Kambaz/Courses/${c._id}/Home`}
@@ -68,44 +72,58 @@ export default function Dashboard() {
                   <CardContent course={c} />
                 )}
 
-                {/* enroll / unenroll */}
-                <Button
-                  variant={enrolled ? "danger" : "success"}
-                  className="rounded-0"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (!currentUser) return;
-                    dispatch(toggle({ user: currentUser._id, course: c._id }));
-                  }}
-                >
-                  {enrolled ? "Unenroll" : "Enroll"}
-                </Button>
+                {/* single row of action buttons */}
+                <div className="d-flex flex-wrap gap-2 p-2">
 
-                {/* faculty edit / delete – only for faculty role */}
-                {currentUser?.role === "FACULTY" && (
-                  <div className="d-flex">
-                    <Button
-                      variant="warning"
-                      className="flex-grow-1 rounded-0"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        dispatch(setDraft(c));
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="danger"
-                      className="flex-grow-1 rounded-0"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        dispatch(deleteCourse(c._id));
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                )}
+                  {/* Go – blue */}
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    as={enrolled ? Link : "button"}
+                    to={enrolled ? `/Kambaz/Courses/${c._id}/Home` : undefined}
+                  >
+                    Go
+                  </Button>
+
+                  {/* Enroll / Unenroll – green / red */}
+                  <Button
+                    size="sm"
+                    variant={enrolled ? "danger" : "success"}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (!currentUser) return;
+                      dispatch(toggle({ user: currentUser._id, course: c._id }));
+                    }}
+                  >
+                    {enrolled ? "Unenroll" : "Enroll"}
+                  </Button>
+
+                  {/* Faculty‑only buttons */}
+                  {currentUser?.role === "FACULTY" && (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="warning"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          dispatch(setDraft(c));
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          dispatch(deleteCourse(c._id));
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  )}
+                </div>
               </Card>
             </Col>
           );
@@ -115,7 +133,7 @@ export default function Dashboard() {
   );
 }
 
-/* ----- helper component just to keep JSX tidy ----- */
+/* ---------- extracted for clarity ---------- */
 function CardContent({ course }: { course: any }) {
   return (
     <>
@@ -129,9 +147,6 @@ function CardContent({ course }: { course: any }) {
         <Card.Text className="flex-grow-1 text-truncate">
           {course.description || "Course description not available."}
         </Card.Text>
-        <Button variant="primary" className="mt-auto">
-          Go
-        </Button>
       </Card.Body>
     </>
   );

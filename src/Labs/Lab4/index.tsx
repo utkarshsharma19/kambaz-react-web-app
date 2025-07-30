@@ -1,45 +1,46 @@
-// import { useSelector } from "react-redux";
-
-import ArrayStateVariable from "./ArrayStateVariable";
-import BooleanStateVariables from "./BooleanStateVariables";
-import ChildStateComponent from "./ChildStateComponent";
 import ClickEvent from "./ClickEvent";
-import Counter from "./Counter";
-import DateStateVariable from "./DateStateVariable";
 import EventObject from "./EventObject";
-import ObjectStateVariable from "./ObjectStateVariable";
+import BooleanStateVariables from "./BooleanStateVariables";
+import DateStateVariable from "./DateStateVariable";
+import Counter from "./Counter";
 import ParentStateComponent from "./ParentStateComponent";
 import PassingDataOnEvent from "./PassingDataOnEvent";
 import PassingFunctions from "./PassingFunctions";
-import AddRedux from "./ReduxExamples/AddRedux/index";
-import CounterRedux from "./ReduxExamples/CounterRedux/index";
-import HelloRedux from "./ReduxExamples/HelloRedux/index";
-import TodoForm from "./ReduxExamples/todos/TodoForm";
+import ArrayStateVariable from "./ArrayStateVariable";
+import ChildStateComponent from "./ChildStateComponent";
+import ObjectStateVariable from "./ObjectStateVariable";
 import StringStateVariables from "./StringStateVariables";
+import AddRedux from "./ReduxExamples/AddRedux";
+import CounterRedux from "./ReduxExamples/CounterRedux";
+import HelloRedux from "./ReduxExamples/HelloRedux";
+import TodoList from "./ReduxExamples/todos/TodoList";   // <-- Redux version
 
 export default function Lab4() {
-  // const { todos } = useSelector((state: any) => state.todosReducer);
   return (
     <div>
+      {/* Redux Todo demo */}
+      <TodoList />
 
-<ClickEvent/>
-<EventObject/>
-<BooleanStateVariables/>
-<DateStateVariable/>
-<Counter/>
-<ParentStateComponent/>
-<PassingDataOnEvent/>
-<PassingFunctions/>
-<ArrayStateVariable/>
-<ChildStateComponent/>
-<TodoForm/>
-<ObjectStateVariable/>
-<StringStateVariables/>
-<AddRedux/>
-<HelloRedux/>
-<CounterRedux/>
+      {/* User‑events demos */}
+      <ClickEvent />
+      <EventObject />
+      <PassingDataOnEvent />
+      <PassingFunctions theFunction={() => alert("👍 theFunction ran")} />
 
+      {/* useState demos */}
+      <BooleanStateVariables />
+      <DateStateVariable />
+      <Counter />
+      <ParentStateComponent />
+      <ArrayStateVariable />
+      <ChildStateComponent />
+      <ObjectStateVariable />
+      <StringStateVariables />
 
-
-
-    </div>);}
+      {/* Redux state demos */}
+      <AddRedux />
+      <HelloRedux />
+      <CounterRedux />
+    </div>
+  );
+}

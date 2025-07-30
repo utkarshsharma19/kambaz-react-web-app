@@ -66,7 +66,7 @@ export default function ModuleEditor({
           Cancel
         </Button>
         <Button
-          variant="primary"
+          variant="danger"            /* red button */
           disabled={!moduleName.trim()}
           onClick={submit}
         >

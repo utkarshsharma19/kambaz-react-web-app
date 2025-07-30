@@ -11,5 +11,5 @@ import enrollmentReducer from "../../Kambaz/Courses/Modules/enrollmentReducer";
 // import enrollmentsReducer from "../../Kambaz/Courses/enrollmentReducer";
 const store = configureStore({
   reducer: { helloReducer,
-counterReducer, addReducer, todos: todosReducer,   modulesReducer, accountReducer,     coursesReducer, enrollmentReducer}});
+counterReducer, addReducer, todosReducer,   modulesReducer, accountReducer,     coursesReducer, enrollmentReducer}});
 export default store;
