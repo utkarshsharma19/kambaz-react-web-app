@@ -18,16 +18,16 @@ import TodoList from "./ReduxExamples/todos/TodoList";   // <-- Redux version
 export default function Lab4() {
   return (
     <div>
-      {/* Redux Todo demo */}
+
       <TodoList />
 
-      {/* User‑events demos */}
+
       <ClickEvent />
       <EventObject />
       <PassingDataOnEvent />
       <PassingFunctions theFunction={() => alert("👍 theFunction ran")} />
 
-      {/* useState demos */}
+
       <BooleanStateVariables />
       <DateStateVariable />
       <Counter />
@@ -37,7 +37,6 @@ export default function Lab4() {
       <ObjectStateVariable />
       <StringStateVariables />
 
-      {/* Redux state demos */}
       <AddRedux />
       <HelloRedux />
       <CounterRedux />
