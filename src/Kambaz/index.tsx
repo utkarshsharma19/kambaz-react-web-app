@@ -2,9 +2,10 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
-import { useSelector } from "react-redux";
 
+import { v4 as uuidv4 } from "uuid";
+import { useSelector, useDispatch } from "react-redux";
+import * as enrollClient from "./Courses/Enrollments/client";
 import KambazNavigation from "./Navigation";
 import Account          from "./Account";
 import Dashboard        from "./Dashboard";
@@ -17,6 +18,7 @@ import * as courseClient  from "./Courses/client";
 import * as userClient  from "./Account/client";      // ← NEW: server API
     // ← NEW: server API
 import { emptyCourse }  from "./Courses/reducer";     // draft helper
+import { replaceEnrollments } from "./Courses/Modules/enrollmentReducer";
 
 /* ------------------------------------------------------------------ */
 export default function Kambaz() {
@@ -25,7 +27,7 @@ export default function Kambaz() {
   const [course,  setCourse]  = useState<any>(emptyCourse());
 
   const { currentUser } = useSelector((s: any) => s.accountReducer);
-
+  const dispatch = useDispatch(); 
   /* ---------- sync courses with server ---------- */
   const loadMyCourses = async () => {
     if (!currentUser) { setCourses([]); return; }
@@ -35,6 +37,17 @@ export default function Kambaz() {
   useEffect(() => { loadMyCourses(); }, [currentUser]);
 
   /* ---------- local CRUD helpers (still client-side for now) ---------- */
+  useEffect(() => {
+    const load = async () => {
+      if (!currentUser) {                // signed out → empty list
+        dispatch(replaceEnrollments([]));
+        return;
+      }
+      const list = await enrollClient.myEnrollments();
+      dispatch(replaceEnrollments(list));
+    };
+    load();
+  }, [currentUser, dispatch]);
   const addNewCourse = async () => {
     const newCourse = await userClient.createCourse(course);
     setCourses([ ...courses, newCourse ]);

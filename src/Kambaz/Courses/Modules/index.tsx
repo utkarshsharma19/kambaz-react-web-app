@@ -1,5 +1,5 @@
 /*  src/Kambaz/Courses/Modules/index.tsx  */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import ListGroup   from "react-bootstrap/ListGroup";

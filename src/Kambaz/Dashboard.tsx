@@ -2,6 +2,7 @@
 import {
   Row, Col, Card, Button, FormControl, Form
 } from "react-bootstrap";
+import * as enrollmentsClient from "../Kambaz/Courses/Enrollments/client";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -204,11 +205,23 @@ export default function Dashboard() {
                   <Button
                     size="sm"
                     variant={enrolled ? "danger" : "success"}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (!currentUser) return;
-                      dispatch(toggle({ user: currentUser._id, course: c._id }));
-                    }}
+                     onClick={async (e) => {
+                         e.preventDefault();
+                         if (!currentUser) return;
+                      
+                         const payload = { user: currentUser._id, course: c._id };
+                         try {
+                           if (enrolled) {
+                             await enrollmentsClient.unenroll(c._id);
+                           } else {
+                           await enrollmentsClient.enroll(c._id);
+                           }
+                           dispatch(toggle(payload));              // optimistic UI
+                         } catch (err) {
+                           console.error("enrollment error:", err);
+                           alert("Could not update enrollment – see console for details.");
+                         }
+                       }}
                   >
                     {enrolled ? "Unenroll" : "Enroll"}
                   </Button>

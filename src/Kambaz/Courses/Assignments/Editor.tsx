@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Form,
@@ -10,14 +10,14 @@ import {
 import { FaSave } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 
-/* ────────────────────────────────────────────────────────────── */
+import * as client from "./client";                 /* ← NEW */
 
 export default function AssignmentEditor({
-  assignments,
+  assignments = [],
   setAssignments,
 }: {
-  assignments: any[];
-  setAssignments: (a: any[]) => void;
+  assignments?: any[];
+  setAssignments?: (a: any[]) => void;
 }) {
   const { cid = "", assignmentId = "new" } = useParams();
   const navigate = useNavigate();
@@ -29,12 +29,10 @@ export default function AssignmentEditor({
     title: "",
     description: "",
     points: 0,
-    /* ↓↓↓ newly‑added fields ↓↓↓ */
     assignmentGroup: "",
     displayGradeAs: "",
     assignTo: "",
     onlineEntryOptions: [] as string[],
-    /* ↑↑↑ */
     due: "",
     availableFrom: "",
     availableUntil: "",
@@ -42,16 +40,36 @@ export default function AssignmentEditor({
 
   const [form, setForm] = useState(existing ?? blank);
 
-  const save = (e: FormEvent) => {
+  /* If user reloads deep-linked editor, fetch the assignment first */
+  useEffect(() => {
+    const load = async () => {
+      if (existing || !cid || assignmentId === "new") return;
+      const list = await client.findAssignmentsForCourse(cid);
+      const found = list.find((a: any) => a._id === assignmentId);
+      if (found) setForm(found);
+    };
+    load();
+  }, [cid, assignmentId, existing]);
+
+  const save = async (e: FormEvent) => {
     e.preventDefault();
-    if (assignmentId === "new") {
-      setAssignments([...assignments, { ...form, _id: uuidv4() }]);
-    } else {
-      setAssignments(
-        assignments.map((a) => (a._id === form._id ? form : a))
-      );
+
+    try {
+      if (assignmentId === "new") {
+        const draft = { ...form, _id: uuidv4() };
+        const saved = await client.createAssignmentForCourse(cid, draft);
+        setAssignments?.([...(assignments || []), saved]);
+      } else {
+        const saved = await client.updateAssignment(form);
+        setAssignments?.(
+          (assignments || []).map((a) => (a._id === saved._id ? saved : a))
+        );
+      }
+      navigate("..");
+    } catch (err) {
+      console.error("save assignment:", err);
+      alert("Could not save assignment – see console for details.");
     }
-    navigate("..");
   };
 
   /* helper for checkbox set */
@@ -66,7 +84,6 @@ export default function AssignmentEditor({
       };
     });
 
-  /* static options */
   const onlineOptions = [
     "Text Entry",
     "Website URL",
@@ -114,7 +131,7 @@ export default function AssignmentEditor({
         </Col>
       </Form.Group>
 
-      {/* ----- newly‑added select fields ----- */}
+      {/* ----- select fields ----- */}
       <Form.Group as={Row} className="mb-3">
         <Form.Label column sm={3}>
           Assignment Group

@@ -22,6 +22,9 @@ const slice = createSlice({
         s.enrollments.push(payload);
       }
     },
+    replaceEnrollments: (state, { payload }) => {
+      state.enrollments = payload;
+    },
     unenroll: (s, { payload }: PayloadAction<Enrollment>) => {
       s.enrollments = s.enrollments.filter(
         e => !(e.user === payload.user && e.course === payload.course)
@@ -36,5 +39,5 @@ const slice = createSlice({
   },
 });
 
-export const { enroll, unenroll, toggle } = slice.actions;
+export const { enroll, unenroll, toggle, replaceEnrollments } = slice.actions;
 export default slice.reducer;

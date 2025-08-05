@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   ListGroup,
@@ -18,24 +18,49 @@ import {
 import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 
-/* ────────────────────────────────────────────────────────────── */
+import * as client from "./client";                 /* ← NEW */
 
 export default function Assignments({
-  assignments,
+  assignments = [],                                 /* still allowed */
   setAssignments,
 }: {
-  assignments: any[];
-  setAssignments: (a: any[]) => void;
+  assignments?: any[];
+  setAssignments?: (a: any[]) => void;
 }) {
   const { cid = "" } = useParams();
   const [open, setOpen] = useState(true);
+
+  /* local copy (so the component also works if parent doesn't pass props) */
+  const [list, setList] = useState<any[]>(assignments);
   const navigate = useNavigate();
 
-  const courseAssignments = assignments.filter((a) => a.course === cid);
+  /* ───── load from server once ───── */
+  useEffect(() => {
+    const load = async () => {
+      if (!cid) return;
+      try {
+        const data = await client.findAssignmentsForCourse(cid);
+        setList(data);
+        setAssignments?.(data);                     // keep parent in sync
+      } catch (e) {
+        console.error("load assignments:", e);
+      }
+    };
+    load();
+  }, [cid]);                                       // reload if course changes
 
-  const remove = (id: string) => {
-    if (window.confirm("Delete this assignment?")) {
-      setAssignments(assignments.filter((a) => a._id !== id));
+  const courseAssignments = list.filter((a) => a.course === cid);
+
+  /* ───── helpers ───── */
+  const remove = async (id: string) => {
+    if (!window.confirm("Delete this assignment?")) return;
+    try {
+      await client.deleteAssignment(id);
+      const newList = list.filter((a) => a._id !== id);
+      setList(newList);
+      setAssignments?.(newList);
+    } catch (e) {
+      console.error("delete assignment:", e);
     }
   };
 
@@ -75,7 +100,7 @@ export default function Assignments({
             pill
             className="me-3 border border-1 border-dark fw-normal"
           >
-            40% of Total
+            40% of Total
           </Badge>
         </ListGroup.Item>
 
@@ -108,7 +133,7 @@ export default function Assignments({
                   </div>
                 </div>
                 <div className="ms-4 mt-1 small text-muted">
-                  Due {a.due || "TBD"} | {a.points || 0} pts
+                  Due {a.due || "TBD"} | {a.points || 0} pts
                 </div>
               </ListGroup.Item>
             ))}
