@@ -3,27 +3,27 @@ import { Button, FormControl } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "./reducer";
-import * as db from "../Database";
+import * as client from "./client";
 
 export default function Signin() {
-  /* local form state */
   const [credentials, setCredentials] = useState({ username: "", password: "" });
 
-  /* redux + router helpers */
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  /* on click “Sign in” */
-  const signin = () => {
-    const user = db.users.find(
-      (u: any) =>
-        u.username === credentials.username &&
-        u.password === credentials.password
-    );
-    if (!user) return;                 // invalid – stay on page
-
-    dispatch(setCurrentUser(user));    // store in Redux
-    navigate("/Kambaz/Dashboard");     // go to dashboard
+  const signin = async () => {
+    try {
+      const user = await client.signin(credentials);
+      if (!user) {
+        alert("Invalid username or password");
+        return;
+      }
+      dispatch(setCurrentUser(user));
+      navigate("/Kambaz/Dashboard");
+    } catch (err) {
+      console.error("Signin error:", err);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (

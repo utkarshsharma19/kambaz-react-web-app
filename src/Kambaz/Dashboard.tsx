@@ -1,22 +1,22 @@
+/*  src/Kambaz/Dashboard.tsx  */
 import {
-  Row,
-  Col,
-  Card,
-  Button,
-  FormControl,
-  Form,
+  Row, Col, Card, Button, FormControl, Form
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addCourse,
   updateCourse as updateCourseAction,
-  deleteCourse,
+  deleteCourse as deleteCourseAction,
   setDraft,
+  replaceCourses
 } from "./Courses/reducer";
 import { toggle } from "./Courses/Modules/enrollmentReducer";
 import { v4 as uuidv4 } from "uuid";
 import * as React from "react";
+
+import * as userClient   from "./Account/client";   // findMyCourses
+import * as courseClient from "./Courses/client";   // fetchAllCourses + CRUD
 
 /* ---------- draft helper ---------- */
 const emptyCourse = () => ({
@@ -30,52 +30,87 @@ const emptyCourse = () => ({
 });
 
 /* ------------------------------------------------------------ */
-
 export default function Dashboard() {
   const dispatch = useDispatch();
 
   /* ---------- Redux ---------- */
   const { currentUser } = useSelector((s: any) => s.accountReducer);
-  const { courses } = useSelector((s: any) => s.coursesReducer);
+  const { courses }     = useSelector((s: any) => s.coursesReducer);
   const { enrollments = [] } =
     useSelector((s: any) => s.enrollmentReducer ?? {});
 
   /* ---------- local UI ---------- */
   const [showAll, setShowAll] = React.useState(false);
+  const [course,  setCourse]  = React.useState<any>(emptyCourse());
+  const [loading, setLoading] = React.useState(false);
 
-  /* ---------- New / Edit draft ---------- */
-  const [course, setCourse] = React.useState<any>(emptyCourse());
+  /* ---------- load (or reload) courses ---------- */
+  React.useEffect(() => {
+    const load = async () => {
+      if (!currentUser) return;
+      setLoading(true);
+      try {
+        const data = showAll
+          ? await courseClient.fetchAllCourses() // all courses
+          : await userClient.findMyCourses();    // only mine
+        dispatch(replaceCourses(data));
+      } catch (e) {
+        console.error("load courses:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [currentUser, showAll, dispatch]);           // 🔹 showAll added
 
-  /* ---------- handlers ---------- */
-  const addNewCourse = () => {
-    const newCourse = { ...course, _id: uuidv4() };
-    dispatch(addCourse(newCourse));
-    setCourse(emptyCourse());
+  /* ---------- create ---------- */
+  const addNewCourse = async () => {
+    try {
+      const saved = await userClient.createCourse(course);
+      dispatch(addCourse(saved));
+      setCourse(emptyCourse());
+    } catch (e) {
+      console.error("create:", e);
+    }            // ← catch block ends here
+  }; 
+    
+  // const addNewCourse = async () => {
+  //   const draft = { ...course, _id: uuidv4() };
+  //   try {
+  //     const saved = await courseClient.createCourse(draft);
+  //     dispatch(addCourse(saved));
+  //     setCourse(emptyCourse());
+  //   } catch (e) { console.error("create:", e); }
+  // };
+
+  /* ---------- update ---------- */
+  const updateCourse = async () => {
+    if (course._id === "0") return;
+    try {
+      const saved = await courseClient.updateCourse(course);
+      dispatch(updateCourseAction(saved));
+      setCourse(emptyCourse());
+    } catch (e) { console.error("update:", e); }
   };
 
-  const updateCourse = () => {
-    if (course._id === "0") return; // nothing selected
-    dispatch(setDraft(course))
-    dispatch(updateCourseAction(course));
-    setCourse(emptyCourse());
+  /* ---------- delete ---------- */
+  const deleteCourse = async (id: string) => {
+    try {
+      await courseClient.removeCourse(id);
+      dispatch(deleteCourseAction(id));
+    } catch (e) { console.error("delete:", e); }
   };
-
-  const selectCourse = (c: any) => {setCourse(c);
-    dispatch(setDraft(c));}
 
   /* ---------- helpers ---------- */
   const isEnrolled = (courseId: string) =>
     !!currentUser &&
-    enrollments.some(
-      (e: any) => e.user === currentUser._id && e.course === courseId
-    );
+    enrollments.some((e: any) => e.user === currentUser._id && e.course === courseId);
 
   const visibleCourses = showAll
     ? courses
     : courses.filter((c: any) => isEnrolled(c._id));
 
   /* ------------------------------------------------------------ */
-
   return (
     <div id="wd-dashboard" style={{ marginLeft: 35 }}>
       <h1 id="wd-dashboard-title" className="d-flex">
@@ -136,6 +171,8 @@ export default function Dashboard() {
       </h2>
       <hr />
 
+      {loading && <p>Loading courses…</p>}
+
       <Row xs={1} sm={2} md={3} lg={4} style={{ columnGap: 30, rowGap: 30 }}>
         {visibleCourses.map((c: any) => {
           const enrolled = isEnrolled(c._id);
@@ -159,9 +196,7 @@ export default function Dashboard() {
                     variant="primary"
                     size="sm"
                     as={enrolled ? Link : "button"}
-                    to={
-                      enrolled ? `/Kambaz/Courses/${c._id}/Home` : undefined
-                    }
+                    to={enrolled ? `/Kambaz/Courses/${c._id}/Home` : undefined}
                   >
                     Go
                   </Button>
@@ -172,9 +207,7 @@ export default function Dashboard() {
                     onClick={(e) => {
                       e.preventDefault();
                       if (!currentUser) return;
-                      dispatch(
-                        toggle({ user: currentUser._id, course: c._id })
-                      );
+                      dispatch(toggle({ user: currentUser._id, course: c._id }));
                     }}
                   >
                     {enrolled ? "Unenroll" : "Enroll"}
@@ -188,7 +221,8 @@ export default function Dashboard() {
                         id="wd-edit-course-click"
                         onClick={(e) => {
                           e.preventDefault();
-                          selectCourse(c); // copy into form
+                          setCourse(c);
+                          dispatch(setDraft(c));
                         }}
                       >
                         Edit
@@ -198,7 +232,7 @@ export default function Dashboard() {
                         variant="danger"
                         onClick={(e) => {
                           e.preventDefault();
-                          dispatch(deleteCourse(c._id));
+                          deleteCourse(c._id);
                         }}
                       >
                         Delete

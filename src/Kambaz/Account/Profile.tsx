@@ -3,13 +3,20 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FormControl, Button } from "react-bootstrap";
 import { setCurrentUser } from "./reducer";
+import * as client from "./client";
 
 export default function Profile() {
+  
   const { currentUser } = useSelector((s: any) => s.accountReducer);
   const [profile, setProfile] = useState<any | null>(null);
 
   const dispatch = useDispatch();
   const navigate  = useNavigate();
+    const updateProfile = async () => {
+    const updatedProfile = await client.updateUser(profile);
+    dispatch(setCurrentUser(updatedProfile));
+  };
+
 
   /* redirect if not signed in */
   useEffect(() => {
@@ -20,10 +27,13 @@ export default function Profile() {
     }
   }, [currentUser, navigate]);
 
-  const signout = () => {
+
+  const signout = async () => {
+    await client.signout();
     dispatch(setCurrentUser(null));
     navigate("/Kambaz/Account/Signin");
   };
+
 
   if (!profile) return null;          // prevents flicker / errors
 
@@ -90,6 +100,7 @@ export default function Profile() {
       <Button id="wd-signout-btn" className="w-100" onClick={signout}>
         Sign out
       </Button>
+      <button onClick={updateProfile} className="btn btn-primary w-100 mb-2"> Update </button>
     </div>
   );
 }

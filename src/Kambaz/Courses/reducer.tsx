@@ -1,6 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid";
-import * as db from "../Database/index";              // initial JSON
 
 export type CourseType = {
   _id: string;
@@ -13,8 +11,8 @@ export type CourseType = {
 };
 
 type CoursesState = {
-  courses: CourseType[];
-  draft: CourseType;            // used by Dashboard form only
+  courses: CourseType[];   // data shown in Dashboard
+  draft  : CourseType;     // used by the form in Dashboard
 };
 
 export const emptyCourse = (): CourseType => ({
@@ -27,38 +25,54 @@ export const emptyCourse = (): CourseType => ({
   description: "",
 });
 
+/* ---------- initial store ---------- */
 const initialState: CoursesState = {
-  courses: db.courses,          // deep‑copy if you mutate objects
-  draft: emptyCourse(),
+  courses: [],             // start empty; filled from the server
+  draft  : emptyCourse(),
 };
 
 const coursesSlice = createSlice({
   name: "courses",
   initialState,
   reducers: {
+    /* copy a course into the Dashboard form */
     setDraft: (state, action: PayloadAction<CourseType>) => {
       state.draft = action.payload;
     },
 
+    /* server just returned a new course → append to list */
     addCourse: (state, { payload }: PayloadAction<CourseType>) => {
-      state.courses.push({ ...payload, _id: uuidv4() });
+      state.courses.push(payload);
       state.draft = emptyCourse();
     },
 
-    updateCourse: (state) => {
+    /* server just returned an updated course → replace in list */
+    updateCourse: (state, { payload }: PayloadAction<CourseType>) => {
       state.courses = state.courses.map((c) =>
-        c._id === state.draft._id ? state.draft : c
+        c._id === payload._id ? payload : c
       );
       state.draft = emptyCourse();
     },
 
+    /* server confirmed deletion → filter it out */
     deleteCourse: (state, action: PayloadAction<string>) => {
       state.courses = state.courses.filter((c) => c._id !== action.payload);
       if (state.draft._id === action.payload) state.draft = emptyCourse();
     },
+
+    /* wholesale replacement (used after fetchAllCourses) */
+    replaceCourses: (state, { payload }: PayloadAction<CourseType[]>) => {
+      state.courses = payload;
+    },
   },
 });
 
-export const { setDraft, addCourse, updateCourse, deleteCourse } =
-  coursesSlice.actions;
+export const {
+  setDraft,
+  addCourse,
+  updateCourse,
+  deleteCourse,
+  replaceCourses,     // ← newly exported
+} = coursesSlice.actions;
+
 export default coursesSlice.reducer;

@@ -1,84 +1,114 @@
-import { useState } from "react";
+/*  src/Kambaz/index.tsx  */
+import { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import { useSelector } from "react-redux";
 
 import KambazNavigation from "./Navigation";
-import Account from "./Account/index";
-import Dashboard from "./Dashboard";
-import Courses from "./Courses/index";
-import ProtectedRoute from "./Account/ProtectedRoute";
-import * as db from "./Database/index";
-import { emptyCourse } from "./Courses/reducer";
+import Account          from "./Account";
+import Dashboard        from "./Dashboard";
+import Courses          from "./Courses";
+import ProtectedRoute   from "./Account/ProtectedRoute";
 import ProtectedCourseRoute from "./Account/ProtectedCourseRoute";
+import Session          from "./Account/Session";
 
+import * as courseClient  from "./Courses/client";  
+import * as userClient  from "./Account/client";      // ← NEW: server API
+    // ← NEW: server API
+import { emptyCourse }  from "./Courses/reducer";     // draft helper
+
+/* ------------------------------------------------------------------ */
 export default function Kambaz() {
-  /* shared local state for now */
-  const [courses, setCourses] = useState<any[]>(db.courses ?? []);
+  /* ---------- state ---------- */
+  const [courses, setCourses] = useState<any[]>([]);  // start empty
   const [course,  setCourse]  = useState<any>(emptyCourse());
 
-  const addNewCourse = () => {
-    setCourses([...courses, { ...course, _id: uuidv4() }]);
-    setCourse(emptyCourse());
+  const { currentUser } = useSelector((s: any) => s.accountReducer);
+
+  /* ---------- sync courses with server ---------- */
+  const loadMyCourses = async () => {
+    if (!currentUser) { setCourses([]); return; }
+    try   { setCourses(await userClient.findMyCourses()); }
+    catch (e) { console.error("load courses:", e); }
   };
-  const deleteCourse = (id: string) =>
-    setCourses(courses.filter((c) => c._id !== id));
-  const updateCourse = () => {
-    setCourses(courses.map((c) => (c._id === course._id ? course : c)));
-    setCourse(emptyCourse());
+  useEffect(() => { loadMyCourses(); }, [currentUser]);
+
+  /* ---------- local CRUD helpers (still client-side for now) ---------- */
+  const addNewCourse = async () => {
+    const newCourse = await userClient.createCourse(course);
+    setCourses([ ...courses, newCourse ]);
   };
 
+  const deleteCourse = async (courseId: string) => {
+    await courseClient.removeCourse(courseId);
+    setCourses(courses.filter((c) => c._id !== courseId));
+  };
+
+  const updateCourse = async () => {
+    await courseClient.updateCourse(course);
+    setCourses(
+      courses.map((c) => (c._id === course._id ? course : c))
+    );
+  };
+
+
+  /* ---------- render ---------- */
   return (
-    <Container fluid id="wd-kambaz">
-      <Row className="d-flex align-items-start">
-        <Col md="auto" className="d-none d-md-block">
-          <KambazNavigation />
-        </Col>
+    <Session>
+      <Container fluid id="wd-kambaz">
+        <Row className="d-flex align-items-start">
+          <Col md="auto" className="d-none d-md-block">
+            <KambazNavigation />
+          </Col>
 
-        <Col>
-          <Routes>
-            {/* default */}
-            <Route index element={<Navigate to="Account" replace />} />
+          <Col>
+            <Routes>
+              {/* default */}
+              <Route index element={<Navigate to="Account" replace />} />
 
-            {/* public account subtree */}
-            <Route path="Account/*" element={<Account />} />
+              {/* public account subtree */}
+              <Route path="Account/*" element={<Account />} />
 
-            {/* protected routes */}
-            <Route
-              path="Dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard
-                    courses={courses}
-                    course={course}
-                    setCourse={setCourse}
-                    addNewCourse={addNewCourse}
-                    deleteCourse={deleteCourse}
-                    updateCourse={updateCourse}
-                  />
-                </ProtectedRoute>
-              }
-            />
-<Route element={<ProtectedCourseRoute />}>
-            <Route
-              path="Courses/:cid/*"
-              element={
-                <ProtectedRoute>
-                  <Courses courses={courses} />
-                </ProtectedRoute>
-              }
-            />
-            </Route>
+              {/* protected dashboard */}
+              <Route
+                path="Dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard
+                      courses={courses}
+                      course={course}
+                      setCourse={setCourse}
+                      addNewCourse={addNewCourse}
+                      deleteCourse={deleteCourse}
+                      updateCourse={updateCourse}
+                    />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* public extras */}
-            <Route path="Calendar" element={<h1>Calendar</h1>} />
-            <Route path="Inbox"    element={<h1>Inbox</h1>} />
+              {/* protected courses subtree */}
+              <Route element={<ProtectedCourseRoute />}>
+                <Route
+                  path="Courses/:cid/*"
+                  element={
+                    <ProtectedRoute>
+                      <Courses courses={courses} />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
 
-            {/* fallback */}
-            <Route path="*" element={<h1>Not found</h1>} />
-          </Routes>
-        </Col>
-      </Row>
-    </Container>
+              {/* public extras */}
+              <Route path="Calendar" element={<h1>Calendar</h1>} />
+              <Route path="Inbox"    element={<h1>Inbox</h1>} />
+
+              {/* fallback */}
+              <Route path="*" element={<h1>Not found</h1>} />
+            </Routes>
+          </Col>
+        </Row>
+      </Container>
+    </Session>
   );
 }

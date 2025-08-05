@@ -1,32 +1,26 @@
+/*  src/Kambaz/Courses/index.tsx  */
 import { useState } from "react";
 import {
-  Routes,
-  Route,
-  Navigate,
-  useParams,
-  useLocation,
+  Routes, Route, Navigate, useParams, useLocation
 } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 import CourseNavigation from "./Navigation";
-import Home from "./Home";
-import Modules from "./Modules";
+import Home        from "./Home";
+import Modules     from "./Modules";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
-import * as db from "../Database";               // ← still used for assignments
 
-/* ────────────────────────────────────────────────────────────── */
+/* ------------------------------------------------------------------ */
 
 export default function Courses() {
-  const { cid } = useParams();                   // course code (e.g. RS101)
-
-  /* local state for assignments only */
-  const [assignments, setAssignments] = useState<any[]>(
-    db.assignments.filter((a: any) => a.course === cid)
-  );
-
-  /* current sub‑page (“home”, “modules”, “assignments”) */
+  /* URL params */
+  const { cid } = useParams();                       // course id
   const pageName = useLocation().pathname.split("/")[4] ?? "home";
+
+  /* local state — assignments only */
+  const [assignments, setAssignments] = useState<any[]>([]);
 
   return (
     <div id="wd-courses">
@@ -44,12 +38,16 @@ export default function Courses() {
         {/* main content */}
         <div className="flex-fill">
           <Routes>
+            {/* default → /home */}
             <Route index element={<Navigate to="home" replace />} />
 
+            {/*  /Courses/:cid/home  */}
             <Route path="home"    element={<Home />} />
+
+            {/*  /Courses/:cid/modules  */}
             <Route path="modules" element={<Modules />} />
 
-            {/* assignments list + editor */}
+            {/*  /Courses/:cid/assignments  */}
             <Route
               path="assignments"
               element={
@@ -59,6 +57,8 @@ export default function Courses() {
                 />
               }
             />
+
+            {/*  /Courses/:cid/assignments/123  */}
             <Route
               path="assignments/:assignmentId"
               element={
@@ -69,12 +69,15 @@ export default function Courses() {
               }
             />
 
-            {/* placeholder routes */}
+            {/* placeholders */}
             <Route path="piazza"   element={<h2>Piazza</h2>} />
             <Route path="zoom"     element={<h2>Zoom</h2>} />
             <Route path="quizzes"  element={<h2>Quizzes</h2>} />
             <Route path="people"   element={<h2>People</h2>} />
             <Route path="grades"   element={<h2>Grades</h2>} />
+
+            {/* catch-all */}
+            <Route path="*" element={<h2>Not found</h2>} />
           </Routes>
         </div>
       </div>

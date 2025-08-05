@@ -6,7 +6,7 @@ import Labs from './Labs/index'
 import AssignmentEditor from './Kambaz/Courses/Assignments/Editor';
 
 function App() {
- 
+  console.log("VITE_HTTP_SERVER =", import.meta.env.VITE_HTTP_SERVER);
   return (
     <HashRouter>
     <Routes>
