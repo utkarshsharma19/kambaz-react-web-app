@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
-import ListGroup from "react-bootstrap/ListGroup";
-import FormControl from "react-bootstrap/FormControl";
+import { useEffect, useState } from "react";
+import ListGroup       from "react-bootstrap/ListGroup";
+import FormControl     from "react-bootstrap/FormControl";
 import { FaPlusCircle, FaTrash, FaPen } from "react-icons/fa";
-import { TiDelete } from "react-icons/ti";
-import * as client from "./client";
+import { TiDelete }    from "react-icons/ti";
+import * as client     from "./client";
 
 type Todo = {
   id: number | string;
   title: string;
+  description?: string;
   completed: boolean;
   editing?: boolean;
+  editingDesc?: boolean;
 };
 
 export default function WorkingWithArraysAsynchronously() {
@@ -21,14 +23,13 @@ export default function WorkingWithArraysAsynchronously() {
   const fetchTodos = async () => {
     try {
       const data = await client.fetchTodos();
-      setTodos(Array.isArray(data) ? data : []);                 // always an array
+      setTodos(Array.isArray(data) ? data : []);
       setError(null);
     } catch (e: any) {
       setError(e?.response?.data?.message ?? "Could not fetch todos");
     }
   };
 
-  /** Accepts either the full list (API returns array) or one todo (object) */
   const mergeIntoList = (incoming: Todo | Todo[]) =>
     setTodos(prev =>
       Array.isArray(incoming) ? incoming : [...prev, incoming]
@@ -59,6 +60,21 @@ export default function WorkingWithArraysAsynchronously() {
     }
   };
 
+  /* property-specific helpers (new spec routes) */
+  const updateCompleted = async (todo: Todo, c: boolean) => {
+    await client.updateTodoCompleted(todo, c);
+    setTodos(prev =>
+      prev.map(t => (t.id === todo.id ? { ...t, completed: c } : t))
+    );
+  };
+
+  const updateDescription = async (todo: Todo, d: string) => {
+    await client.updateTodoDescription(todo, d);
+    setTodos(prev =>
+      prev.map(t => (t.id === todo.id ? { ...t, description: d } : t))
+    );
+  };
+
   const updateTodo = async (todo: Todo) => {
     try {
       await client.updateTodo(todo);
@@ -70,7 +86,16 @@ export default function WorkingWithArraysAsynchronously() {
 
   const editTodo = (todo: Todo) =>
     setTodos(prev =>
-      prev.map(t => (t.id === todo.id ? { ...t, editing: true } : t))
+      prev.map(t =>
+        t.id === todo.id ? { ...t, editing: true, editingDesc: false } : t
+      )
+    );
+
+  const editDesc = (todo: Todo) =>
+    setTodos(prev =>
+      prev.map(t =>
+        t.id === todo.id ? { ...t, editingDesc: true, editing: false } : t
+      )
     );
 
   /* ───────── lifecycle ───────── */
@@ -120,14 +145,22 @@ export default function WorkingWithArraysAsynchronously() {
               className="text-primary float-end me-2 mt-1"
               role="button"
             />
+            <FaPen
+              onClick={() => editDesc(todo)}
+              className="text-secondary float-end me-2 mt-1"
+              title="Edit description"
+              role="button"
+            />
+
+            {/* checkbox uses new completed route */}
             <input
               type="checkbox"
               className="form-check-input me-2"
               checked={todo.completed}
-              onChange={e =>
-                updateTodo({ ...todo, completed: e.target.checked })
-              }
+              onChange={e => updateCompleted(todo, e.target.checked)}
             />
+
+            {/* title edit (PUT) */}
             {!todo.editing ? (
               <span
                 style={{
@@ -143,8 +176,19 @@ export default function WorkingWithArraysAsynchronously() {
                 onKeyDown={e =>
                   e.key === "Enter" && updateTodo({ ...todo, editing: false })
                 }
-                onChange={e =>
-                  updateTodo({ ...todo, title: e.target.value })
+                onChange={e => updateTodo({ ...todo, title: e.target.value })}
+              />
+            )}
+
+            {/* description edit (GET route) */}
+            {todo.editingDesc && (
+              <FormControl
+                className="w-75 mt-2"
+                placeholder="Description"
+                defaultValue={todo.description ?? ""}
+                onKeyDown={e =>
+                  e.key === "Enter" &&
+                  updateDescription(todo, (e.target as HTMLInputElement).value)
                 }
               />
             )}

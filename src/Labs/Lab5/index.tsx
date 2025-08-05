@@ -19,7 +19,6 @@ export default function Lab5() {
         </div><hr/>
         <PathParameters/>
         <QueryParameters/>
-        <WorkingWithArrays/>
         <HttpClient/>
         <WorkingWithArrays/>
         <WorkingWithArraysAsynchronously/>

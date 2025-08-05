@@ -1,68 +1,133 @@
 import { useState } from "react";
-import FormControl from "react-bootstrap/FormControl";
-
-const HTTP_SERVER = import.meta.env.VITE_HTTP_SERVER as string;
+import FormControl   from "react-bootstrap/FormControl";
+import Form          from "react-bootstrap/Form";
+import Button        from "react-bootstrap/Button";
+import * as client   from "./client";
 
 export default function WorkingWithObjects() {
-  /* local object state */
+  /* assignment state */
   const [assignment, setAssignment] = useState({
     id: 1,
     title: "NodeJS Assignment",
     description: "Create a NodeJS server with ExpressJS",
-    due: "2021-10-10",
+    due: "2025-10-10",
     completed: false,
     score: 0,
   });
 
-  const ASSIGNMENT_API_URL = `${HTTP_SERVER}/lab5/assignment`;
+  /* module state */
+  const [module, setModule] = useState<any | null>(null);
+  const [modEdit, setModEdit] = useState({ name: "", desc: "" });
+
+  /* helpers ------------------------------------------------------------- */
+
+  const refreshModule = async () => setModule(await client.fetchModule());
+
+  /* render -------------------------------------------------------------- */
 
   return (
     <div id="wd-working-with-objects">
       <h3>Working With Objects</h3>
 
-      {/* ───────── Modify a single property ───────── */}
-      <h4>Modifying Properties</h4>
-      <a
-        id="wd-update-assignment-title"
-        className="btn btn-primary float-end"
-        href={`${ASSIGNMENT_API_URL}/title/${encodeURIComponent(
-          assignment.title
-        )}`}                       
-      >
-        Update Title
-      </a>
+      {/* ───────────────── Assignment ───────────────── */}
+      <h4>Assignment</h4>
+      <Form className="mb-2">
+        <FormControl
+          className="mt-1"
+          placeholder="Title"
+          value={assignment.title}
+          onChange={e =>
+            setAssignment({ ...assignment, title: e.target.value })
+          }
+        />
+        <Button
+          className="mt-2"
+          onClick={() => client.updateTitle(assignment.title)}
+        >
+          Save Title
+        </Button>
 
-      {/* controlled text input so UI stays in-sync with state */}
-      <FormControl
-        id="wd-assignment-title"
-        className="w-75"
-        value={assignment.title}
-        onChange={(e) =>
-          setAssignment({ ...assignment, title: e.target.value })
-        }
-      />
+        <FormControl
+          className="mt-3"
+          type="number"
+          placeholder="Score"
+          value={assignment.score}
+          onChange={e =>
+            setAssignment({ ...assignment, score: Number(e.target.value) })
+          }
+        />
+        <Button
+          className="mt-2 me-3"
+          onClick={() => client.updateScore(assignment.score)}
+        >
+          Save Score
+        </Button>
+
+        <Form.Check
+          className="mt-3"
+          type="checkbox"
+          label="Completed?"
+          checked={assignment.completed}
+          onChange={e => {
+            setAssignment({ ...assignment, completed: e.target.checked });
+            client.updateCompleted(e.target.checked);
+          }}
+        />
+      </Form>
+
       <hr />
 
-      {/* ───────── Retrieve full object ───────── */}
-      <h4>Retrieving Objects</h4>
-      <a
-        id="wd-retrieve-assignments"
-        className="btn btn-primary"
-        href={ASSIGNMENT_API_URL}
+      {/* ───────────────── Module ───────────────── */}
+      <h4>Module</h4>
+      <Button className="me-2 mb-2" onClick={refreshModule}>
+        Get Module
+      </Button>
+      <Button
+        className="me-2 mb-2"
+        onClick={async () => alert(await client.fetchModuleName())}
       >
-        Get Assignment
-      </a>
-      <hr />
+        Get Module Name
+      </Button>
 
-      {/* ───────── Retrieve single property ───────── */}
-      <h4>Retrieving Properties</h4>
-      <a
-        id="wd-retrieve-assignment-title"
-        className="btn btn-primary"
-        href={`${ASSIGNMENT_API_URL}/title`}
-      >
-        Get Title
-      </a>
+      {module && (
+        <div className="border rounded p-3 mb-3">
+          <pre>{JSON.stringify(module, null, 2)}</pre>
+        </div>
+      )}
+
+      <Form>
+        <FormControl
+          className="mt-1"
+          placeholder="New module name"
+          value={modEdit.name}
+          onChange={e => setModEdit({ ...modEdit, name: e.target.value })}
+        />
+        <Button
+          className="mt-2"
+          onClick={async () => {
+            await client.updateModuleName(modEdit.name);
+            refreshModule();
+          }}
+        >
+          Save Name
+        </Button>
+
+        <FormControl
+          className="mt-3"
+          placeholder="New module description"
+          value={modEdit.desc}
+          onChange={e => setModEdit({ ...modEdit, desc: e.target.value })}
+        />
+        <Button
+          className="mt-2"
+          onClick={async () => {
+            await client.updateModuleDesc(modEdit.desc);
+            refreshModule();
+          }}
+        >
+          Save Description
+        </Button>
+      </Form>
       <hr />
     </div>
   );
