@@ -23,6 +23,8 @@ const safeGet = async <T>(url: string) => {
   }
 };
 
+
+
 const safePost = async <T>(url: string, payload: unknown) => {
   try {
     const { data } = await axios.post<T>(url, payload, {
@@ -65,6 +67,7 @@ const ASSIGNMENT_API = `${HTTP_SERVER}/lab5/assignment`;
 
 export const fetchAssignment   = ()          => safeGet(ASSIGNMENT_API);
 export const updateTitle       = (t: string) => safeGet(`${ASSIGNMENT_API}/title/${encodeURIComponent(t)}`);
+export const fetchAssignmentTitle = ()          => safeGet<string>(`${ASSIGNMENT_API}/title`); 
 export const updateScore       = (s: number) => safeGet(`${ASSIGNMENT_API}/score/${s}`);
 export const updateCompleted   = (c: boolean)=> safeGet(`${ASSIGNMENT_API}/completed/${c}`);
 
@@ -72,6 +75,7 @@ export const updateCompleted   = (c: boolean)=> safeGet(`${ASSIGNMENT_API}/compl
 const MODULE_API = `${HTTP_SERVER}/lab5/module`;
 
 export const fetchModule       = ()          => safeGet(MODULE_API);
+
 export const fetchModuleName   = ()          => safeGet(`${MODULE_API}/name`);
 export const updateModuleName  = (n: string) => safeGet(`${MODULE_API}/name/${encodeURIComponent(n)}`);
 export const updateModuleDesc  = (d: string) => safeGet(`${MODULE_API}/description/${encodeURIComponent(d)}`);
@@ -91,3 +95,4 @@ export const updateTodoCompleted   = (todo: ApiTodo, c: boolean) =>
 
 export const updateTodoDescription = (todo: ApiTodo, d: string) =>
   safeGet<ApiTodo[]>(`${TODOS_API}/${todo.id}/description/${encodeURIComponent(d)}`);
+
