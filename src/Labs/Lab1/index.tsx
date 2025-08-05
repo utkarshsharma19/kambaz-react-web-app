@@ -12,6 +12,23 @@ export default function Lab1() {
           >
             Click here to see my GitHub
           </a>
+
+          <a
+            href="https://github.com/utkarshsharma19/kambaz-node-server-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Click here to see my Backend
+          </a>
+        </p>
+
+        <a
+            href="https://kambaz-node-server-app-r4nl.onrender.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            My backend server
+          </a>
         </p>
 
         {/* ─────────────────────── heading-tag sample ─────────────────────── */}
