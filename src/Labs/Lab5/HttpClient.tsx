@@ -10,7 +10,7 @@ export default function HttpClient() {
     try {
       const message = await client.fetchWelcomeMessage();
       setWelcomeOnClick(message);
-    } catch (e) {
+    } catch {
       setWelcomeOnClick("Request failed");
     }
   };
@@ -21,7 +21,7 @@ export default function HttpClient() {
       try {
         const message = await client.fetchWelcomeMessage();
         setWelcomeOnLoad(message);
-      } catch (e) {
+      } catch {
         setWelcomeOnLoad("Request failed");
       }
     };
@@ -34,7 +34,12 @@ export default function HttpClient() {
       <hr />
 
       <h4>Requesting on Click</h4>
-      <button className="btn btn-primary me-2" onClick={fetchWelcomeOnClick}>
+      {/* added rubric id */}
+      <button
+        id="wd-fetch-welcome"
+        className="btn btn-primary me-2"
+        onClick={fetchWelcomeOnClick}
+      >
         Fetch Welcome
       </button>
       <br />
