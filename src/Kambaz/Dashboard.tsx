@@ -1,7 +1,7 @@
+/*  src/Kambaz/Dashboard.tsx  */
 import {
   Row, Col, Card, Button, FormControl, Form
 } from "react-bootstrap";
-// ⛔ removed: import * as enrollmentsClient from "../Kambaz/Courses/Enrollments/client";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -43,6 +43,10 @@ export default function Dashboard() {
   const [course,  setCourse]  = React.useState<any>(emptyCourse());
   const [loading, setLoading] = React.useState(false);
 
+  // refs to drive “go to update corner”
+  const formRef = React.useRef<HTMLDivElement | null>(null);
+  const nameInputRef = React.useRef<HTMLInputElement | null>(null);
+
   /* ---------- load (or reload) courses ---------- */
   React.useEffect(() => {
     const load = async () => {
@@ -65,10 +69,10 @@ export default function Dashboard() {
   /* ---------- create (DB) ---------- */
   const addNewCourse = async () => {
     try {
-      const saved = await courseClient.createCourse(course); // DB insert (server auto-enrolls)
+      const saved = await courseClient.createCourse(course); // DB insert (server may auto-enroll)
       dispatch(addCourse(saved));
       setCourse(emptyCourse());
-  
+
       // reflect enrollment in local store so it shows under “My Courses”
       if (!showAll && currentUser) {
         dispatch(toggle({ user: currentUser._id, course: saved._id })); // optimistic UI
@@ -109,6 +113,17 @@ export default function Dashboard() {
     ? courses
     : courses.filter((c: any) => isEnrolled(c._id));
 
+  // jump to the form and focus input
+  const goToUpdateCorner = (c: any) => {
+    setCourse(c);
+    dispatch(setDraft(c));
+    // scroll then focus
+    requestAnimationFrame(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setTimeout(() => nameInputRef.current?.focus(), 250);
+    });
+  };
+
   /* ------------------------------------------------------------ */
   return (
     <div id="wd-dashboard" style={{ marginLeft: 35 }}>
@@ -124,44 +139,48 @@ export default function Dashboard() {
       </h1>
       <hr />
 
-      {/* -------- New / Edit form -------- */}
-      <h5 className="d-flex align-items-center">
-        New&nbsp;Course
-        <Button
-          variant="warning"
-          className="ms-auto me-2"
-          id="wd-update-course-click"
-          disabled={course._id === "0"}
-          onClick={updateCourse}
-        >
-          Update
-        </Button>
-        <Button
-          variant="primary"
-          id="wd-add-new-course-click"
-          onClick={addNewCourse}
-        >
-          Add
-        </Button>
-      </h5>
+      {/* -------- New / Edit form (“update corner”) -------- */}
+      <div ref={formRef}>
+        <h5 className="d-flex align-items-center">
+          {course._id === "0" ? "New Course" : `Editing: ${course.name || "(untitled)"}`}
+          <Button
+            variant="warning"
+            className="ms-auto me-2"
+            id="wd-update-course-click"
+            disabled={course._id === "0"}
+            onClick={updateCourse}
+          >
+            Update
+          </Button>
+          <Button
+            variant="primary"
+            id="wd-add-new-course-click"
+            onClick={addNewCourse}
+          >
+            Add
+          </Button>
+        </h5>
 
-      <Form style={{ maxWidth: 400 }} className="mb-4">
-        <FormControl
-          className="mb-2"
-          placeholder="Course name"
-          value={course.name}
-          onChange={(e) => setCourse({ ...course, name: e.target.value })}
-        />
-        <FormControl
-          as="textarea"
-          rows={3}
-          placeholder="Description"
-          value={course.description}
-          onChange={(e) =>
-            setCourse({ ...course, description: e.target.value })
-          }
-        />
-      </Form>
+        <Form style={{ maxWidth: 400 }} className="mb-4">
+          <FormControl
+            className="mb-2"
+            placeholder="Course name"
+            value={course.name}
+            ref={nameInputRef}
+            onChange={(e) => setCourse({ ...course, name: e.target.value })}
+          />
+          <FormControl
+            as="textarea"
+            rows={3}
+            placeholder="Description"
+            value={course.description}
+            onChange={(e) =>
+              setCourse({ ...course, description: e.target.value })
+            }
+          />
+        </Form>
+      </div>
+
       <hr />
 
       {/* -------- courses grid -------- */}
@@ -224,31 +243,31 @@ export default function Dashboard() {
                     {enrolled ? "Unenroll" : "Enroll"}
                   </Button>
 
+                  {/* Update available to everyone */}
+                  <Button
+                    size="sm"
+                    variant="warning"
+                    id={`wd-update-course-${c._id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToUpdateCorner(c); // scroll + focus + prefill form
+                    }}
+                  >
+                    Update
+                  </Button>
+
+                  {/* Keep Delete restricted to faculty (optional) */}
                   {currentUser?.role === "FACULTY" && (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="warning"
-                        id="wd-edit-course-click"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setCourse(c);
-                          dispatch(setDraft(c));
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          deleteCourse(c._id);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        deleteCourse(c._id);
+                      }}
+                    >
+                      Delete
+                    </Button>
                   )}
                 </div>
               </Card>
@@ -262,17 +281,28 @@ export default function Dashboard() {
 
 /* ---------- card content ---------- */
 function CardContent({ course }: { course: any }) {
+  const displayName =
+    course?.name ?? course?.title ?? course?.courseName ?? "(untitled)";
+
   return (
     <>
       <Card.Img
         variant="top"
-        src={course.image || "/images/reactjs.jpg"}
+        src={course?.image || "/images/reactjs.jpg"}
         style={{ height: 140, objectFit: "cover" }}
       />
       <Card.Body className="d-flex flex-column">
-        <Card.Title className="text-truncate">{course.name}</Card.Title>
-        <Card.Text className="flex-grow-1 text-truncate">
-          {course.description || "Course description not available."}
+        <Card.Title className="mb-1 text-truncate">{displayName}</Card.Title>
+        <Card.Text
+          className="flex-grow-1"
+          style={{
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {course?.description || "Course description not available."}
         </Card.Text>
       </Card.Body>
     </>
