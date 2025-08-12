@@ -4,6 +4,8 @@ import AccountNavigation from "./Navigation";
 import Signin from "./SignIn";
 import Signup from "./SignUp";
 import Profile from "./Profile";
+import Users from "../Courses/People/Users";
+
 
 export default function Account() {
   const { currentUser } = useSelector((s: any) => s.accountReducer);
@@ -31,6 +33,8 @@ export default function Account() {
                 <Route path="Signin" element={<Signin />} />
                 <Route path="Signup" element={<Signup />} />
                 <Route path="Profile" element={<Profile />} />
+                <Route path="/Users" element={<Users />} />
+                <Route path="/Users/:uid" element={<Users />} />
               </Routes>
             </td>
           </tr>

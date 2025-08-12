@@ -3,20 +3,31 @@ import { useSelector } from "react-redux";
 
 export default function AccountNavigation() {
   const { currentUser } = useSelector((s: any) => s.accountReducer);
-  const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
   const { pathname } = useLocation();
+  const active = (path: string) => (pathname.includes(path) ? "active" : "");
 
   return (
-    <ul className="list-group">
-      {links.map((l) => (
-        <Link
-          key={l}
-          to={`/Kambaz/Account/${l}`}
-          className={`list-group-item ${pathname.includes(l) ? "active" : ""}`}
-        >
-          {l}
+    <div id="wd-account-navigation" className="list-group">
+      <Link to="/Kambaz/Account/Profile" className={`list-group-item ${active("Profile")}`}>
+        Profile
+      </Link>
+
+      {!currentUser && (
+        <>
+          <Link to="/Kambaz/Account/Signin" className={`list-group-item ${active("Signin")}`}>
+            Signin
+          </Link>
+          <Link to="/Kambaz/Account/Signup" className={`list-group-item ${active("Signup")}`}>
+            Signup
+          </Link>
+        </>
+      )}
+
+      {currentUser?.role === "ADMIN" && (
+        <Link to="/Kambaz/Account/Users" className={`list-group-item ${active("Users")}`}>
+          Users
         </Link>
-      ))}
-    </ul>
+      )}
+    </div>
   );
 }

@@ -22,3 +22,10 @@ export const updateUser = async (u: any) =>
 
 export const deleteUser = async (uid: string) =>
   (await api.delete(`/api/users/${uid}`)).data;
+  
+  export const findUsersForCourse = async (courseId: string) => {
+    const { data } = await axios.get(`${COURSES_API}/${courseId}/users`, {
+      withCredentials: true,
+    });
+    return data;
+  };

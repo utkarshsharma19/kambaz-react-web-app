@@ -12,6 +12,8 @@ import Modules     from "./Modules";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
 import PeopleTable from "./People/Table";
+import EnrolledPeople from "./People/EnrolledPeople";
+
 /* ------------------------------------------------------------------ */
 
 export default function Courses() {
@@ -73,7 +75,7 @@ export default function Courses() {
             <Route path="piazza"   element={<h2>Piazza</h2>} />
             <Route path="zoom"     element={<h2>Zoom</h2>} />
             <Route path="quizzes"  element={<h2>Quizzes</h2>} />
-            <Route path="people"   element={<PeopleTable/>} />
+            <Route path="people"   element={<EnrolledPeople/>} />
             <Route path="grades"   element={<h2>Grades</h2>} />
 
             {/* catch-all */}

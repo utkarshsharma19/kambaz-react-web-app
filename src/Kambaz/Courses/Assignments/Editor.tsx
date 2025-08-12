@@ -1,16 +1,9 @@
+// src/Kambaz/Courses/Assignments/Editor.tsx
 import { useState, FormEvent, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Form,
-  Button,
-  Row,
-  Col,
-  Stack,
-} from "react-bootstrap";
+import { Form, Button, Row, Col, Stack } from "react-bootstrap";
 import { FaSave } from "react-icons/fa";
-import { v4 as uuidv4 } from "uuid";
-
-import * as client from "./client";                 /* ← NEW */
+import * as client from "./client";
 
 export default function AssignmentEditor({
   assignments = [],
@@ -23,8 +16,8 @@ export default function AssignmentEditor({
   const navigate = useNavigate();
 
   const existing = assignments.find((a) => a._id === assignmentId);
+
   const blank = {
-    _id: "new",
     course: cid,
     title: "",
     description: "",
@@ -40,24 +33,26 @@ export default function AssignmentEditor({
 
   const [form, setForm] = useState(existing ?? blank);
 
-  /* If user reloads deep-linked editor, fetch the assignment first */
+  // If user reloads a deep-linked editor, fetch from server first
   useEffect(() => {
     const load = async () => {
       if (existing || !cid || assignmentId === "new") return;
-      const list = await client.findAssignmentsForCourse(cid);
-      const found = list.find((a: any) => a._id === assignmentId);
-      if (found) setForm(found);
+      try {
+        const list = await client.findAssignmentsForCourse(cid);
+        const found = list.find((a: any) => a._id === assignmentId);
+        if (found) setForm(found);
+      } catch (e) {
+        console.error("load assignment:", e);
+      }
     };
     load();
   }, [cid, assignmentId, existing]);
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
-
     try {
       if (assignmentId === "new") {
-        const draft = { ...form, _id: uuidv4() };
-        const saved = await client.createAssignmentForCourse(cid, draft);
+        const saved = await client.createAssignmentForCourse(cid, form);
         setAssignments?.([...(assignments || []), saved]);
       } else {
         const saved = await client.updateAssignment(form);
@@ -72,7 +67,6 @@ export default function AssignmentEditor({
     }
   };
 
-  /* helper for checkbox set */
   const toggleOption = (opt: string) =>
     setForm((f) => {
       const present = f.onlineEntryOptions.includes(opt);
@@ -110,9 +104,7 @@ export default function AssignmentEditor({
           rows={4}
           placeholder="Description"
           value={form.description}
-          onChange={(e) =>
-            setForm({ ...form, description: e.target.value })
-          }
+          onChange={(e) => setForm({ ...form, description: e.target.value })}
         />
       </Form.Group>
 
@@ -124,9 +116,7 @@ export default function AssignmentEditor({
           <Form.Control
             type="number"
             value={form.points}
-            onChange={(e) =>
-              setForm({ ...form, points: +e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, points: +e.target.value })}
           />
         </Col>
       </Form.Group>
@@ -224,9 +214,7 @@ export default function AssignmentEditor({
               <Form.Control
                 type="date"
                 value={form.due}
-                onChange={(e) =>
-                  setForm({ ...form, due: e.target.value })
-                }
+                onChange={(e) => setForm({ ...form, due: e.target.value })}
               />
             </Form.Group>
 
@@ -258,10 +246,7 @@ export default function AssignmentEditor({
 
       {/* ----- action buttons ----- */}
       <Stack direction="horizontal" gap={2} className="justify-content-end">
-        <Button
-          variant="secondary"
-          onClick={() => navigate("..")}
-        >
+        <Button variant="secondary" onClick={() => navigate("..")}>
           Cancel
         </Button>
         <Button type="submit" variant="danger">

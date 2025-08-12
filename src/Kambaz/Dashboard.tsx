@@ -1,8 +1,7 @@
-/*  src/Kambaz/Dashboard.tsx  */
 import {
   Row, Col, Card, Button, FormControl, Form
 } from "react-bootstrap";
-import * as enrollmentsClient from "../Kambaz/Courses/Enrollments/client";
+// ⛔ removed: import * as enrollmentsClient from "../Kambaz/Courses/Enrollments/client";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -13,10 +12,9 @@ import {
   replaceCourses
 } from "./Courses/reducer";
 import { toggle } from "./Courses/Modules/enrollmentReducer";
-import { v4 as uuidv4 } from "uuid";
 import * as React from "react";
 
-import * as userClient   from "./Account/client";   // findMyCourses
+import * as userClient   from "./Account/client";   // findMyCourses + enroll/unenroll
 import * as courseClient from "./Courses/client";   // fetchAllCourses + CRUD
 
 /* ---------- draft helper ---------- */
@@ -52,8 +50,8 @@ export default function Dashboard() {
       setLoading(true);
       try {
         const data = showAll
-          ? await courseClient.fetchAllCourses() // all courses
-          : await userClient.findMyCourses();    // only mine
+          ? await courseClient.fetchAllCourses() // all courses from DB
+          : await userClient.findMyCourses();    // only mine (session-based)
         dispatch(replaceCourses(data));
       } catch (e) {
         console.error("load courses:", e);
@@ -62,44 +60,44 @@ export default function Dashboard() {
       }
     };
     load();
-  }, [currentUser, showAll, dispatch]);           // 🔹 showAll added
+  }, [currentUser, showAll, dispatch]);
 
-  /* ---------- create ---------- */
+  /* ---------- create (DB) ---------- */
   const addNewCourse = async () => {
     try {
-      const saved = await userClient.createCourse(course);
+      const saved = await courseClient.createCourse(course); // DB insert (server auto-enrolls)
       dispatch(addCourse(saved));
       setCourse(emptyCourse());
+  
+      // reflect enrollment in local store so it shows under “My Courses”
+      if (!showAll && currentUser) {
+        dispatch(toggle({ user: currentUser._id, course: saved._id })); // optimistic UI
+      }
     } catch (e) {
       console.error("create:", e);
-    }            // ← catch block ends here
-  }; 
-    
-  // const addNewCourse = async () => {
-  //   const draft = { ...course, _id: uuidv4() };
-  //   try {
-  //     const saved = await courseClient.createCourse(draft);
-  //     dispatch(addCourse(saved));
-  //     setCourse(emptyCourse());
-  //   } catch (e) { console.error("create:", e); }
-  // };
+    }
+  };
 
-  /* ---------- update ---------- */
+  /* ---------- update (DB) ---------- */
   const updateCourse = async () => {
     if (course._id === "0") return;
     try {
-      const saved = await courseClient.updateCourse(course);
+      const saved = await courseClient.updateCourse(course); // returns updated doc
       dispatch(updateCourseAction(saved));
       setCourse(emptyCourse());
-    } catch (e) { console.error("update:", e); }
+    } catch (e) {
+      console.error("update:", e);
+    }
   };
 
-  /* ---------- delete ---------- */
+  /* ---------- delete (DB) ---------- */
   const deleteCourse = async (id: string) => {
     try {
       await courseClient.removeCourse(id);
       dispatch(deleteCourseAction(id));
-    } catch (e) { console.error("delete:", e); }
+    } catch (e) {
+      console.error("delete:", e);
+    }
   };
 
   /* ---------- helpers ---------- */
@@ -205,23 +203,23 @@ export default function Dashboard() {
                   <Button
                     size="sm"
                     variant={enrolled ? "danger" : "success"}
-                     onClick={async (e) => {
-                         e.preventDefault();
-                         if (!currentUser) return;
-                      
-                         const payload = { user: currentUser._id, course: c._id };
-                         try {
-                           if (enrolled) {
-                             await enrollmentsClient.unenroll(c._id);
-                           } else {
-                           await enrollmentsClient.enroll(c._id);
-                           }
-                           dispatch(toggle(payload));              // optimistic UI
-                         } catch (err) {
-                           console.error("enrollment error:", err);
-                           alert("Could not update enrollment – see console for details.");
-                         }
-                       }}
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      if (!currentUser) return;
+
+                      const payload = { user: currentUser._id, course: c._id };
+                      try {
+                        if (enrolled) {
+                          await userClient.unenrollFromCourse(currentUser._id, c._id);
+                        } else {
+                          await userClient.enrollIntoCourse(currentUser._id, c._id);
+                        }
+                        dispatch(toggle(payload)); // optimistic UI
+                      } catch (err) {
+                        console.error("enrollment error:", err);
+                        alert("Could not update enrollment – see console for details.");
+                      }
+                    }}
                   >
                     {enrolled ? "Unenroll" : "Enroll"}
                   </Button>

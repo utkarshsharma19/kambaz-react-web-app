@@ -1,3 +1,4 @@
+// src/Kambaz/Courses/Assignments/index.tsx
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
@@ -11,47 +12,45 @@ import { BsGripVertical } from "react-icons/bs";
 import {
   FaFileAlt,
   FaSearch,
-  FaPlus,
   FaChevronDown,
   FaTrash,
 } from "react-icons/fa";
 import { IoEllipsisVertical } from "react-icons/io5";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 
-import * as client from "./client";                 /* ← NEW */
+import * as client from "./client";
 
 export default function Assignments({
-  assignments = [],                                 /* still allowed */
+  assignments = [],
   setAssignments,
 }: {
   assignments?: any[];
   setAssignments?: (a: any[]) => void;
 }) {
   const { cid = "" } = useParams();
-  const [open, setOpen] = useState(true);
-
-  /* local copy (so the component also works if parent doesn't pass props) */
-  const [list, setList] = useState<any[]>(assignments);
   const navigate = useNavigate();
 
-  /* ───── load from server once ───── */
+  const [open, setOpen] = useState(true);
+  const [list, setList] = useState<any[]>(assignments);
+
+  // Load from server when course changes
   useEffect(() => {
     const load = async () => {
       if (!cid) return;
       try {
         const data = await client.findAssignmentsForCourse(cid);
         setList(data);
-        setAssignments?.(data);                     // keep parent in sync
+        setAssignments?.(data); // keep parent (if any) in sync
       } catch (e) {
         console.error("load assignments:", e);
       }
     };
     load();
-  }, [cid]);                                       // reload if course changes
+  }, [cid]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // If you prefer, you can skip this filter because the server already scoped by course
   const courseAssignments = list.filter((a) => a.course === cid);
 
-  /* ───── helpers ───── */
   const remove = async (id: string) => {
     if (!window.confirm("Delete this assignment?")) return;
     try {
