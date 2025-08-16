@@ -9,6 +9,7 @@ import Modules from "./Modules";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
 import EnrolledPeople from "./People/EnrolledPeople";
+import QuizzesRoutes from "./Quizzes/index";
 
 export default function Courses() {
   const { cid = "" } = useParams();
@@ -57,7 +58,7 @@ export default function Courses() {
             />
             <Route path="piazza"  element={<h2>Piazza</h2>} />
             <Route path="zoom"    element={<h2>Zoom</h2>} />
-            <Route path="quizzes" element={<h2>Quizzes</h2>} />
+            <Route path="quizzes/*" element={<QuizzesRoutes/>} />
             <Route path="people"  element={<EnrolledPeople />} />
             <Route path="grades"  element={<h2>Grades</h2>} />
             <Route path="*" element={<h2>Not found</h2>} />
