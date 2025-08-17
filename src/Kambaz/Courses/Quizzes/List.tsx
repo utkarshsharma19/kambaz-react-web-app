@@ -6,6 +6,8 @@ import { availabilityLabel, formatDateTime, sumPoints } from "./types";
 import type { Question, Quiz, User } from "./types";
 import * as userClient from "../../Account/client";
 
+type Attempt = { score: number } | null; // keep whatever your real type is
+
 export default function QuizList() {
   const { cid } = useParams();
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ export default function QuizList() {
   const [loading, setLoading] = useState(true);
   const [list, setList] = useState<Quiz[]>([]);
   const [qMeta, setQMeta] = useState<Record<string, { points: number; count: number }>>({});
-  const [lastByQuiz, setLastByQuiz] = useState<Record<string, Attempt | null>>({});
+  const [lastByQuiz, setLastByQuiz] = useState<Record<string, Attempt>>({});
   const [sortKey, setSortKey] = useState<"title" | "due" | "availableFrom">("title");
 
   useEffect(() => {
@@ -29,18 +31,17 @@ export default function QuizList() {
 
         const entries: [string, { points: number; count: number }][] = await Promise.all(
           res.map(async (q) => {
-            const qs = await api.listQuestions(q._id);
+            const qs: Question[] = await api.listQuestions(q._id);
             return [q._id, { points: sumPoints(qs), count: qs.length }];
           })
         );
         setQMeta(Object.fromEntries(entries));
 
-        // Student last attempt per quiz
         try {
           const attempts = await Promise.all(
             res.map((q) => api.getLastAttempt(q._id).catch(() => null))
           );
-          const map: Record<string, Attempt | null> = {};
+          const map: Record<string, Attempt> = {};
           res.forEach((q, i) => (map[q._id] = attempts[i]));
           setLastByQuiz(map);
         } catch {}
@@ -97,7 +98,11 @@ export default function QuizList() {
             <option value="due">Sort by: Due date</option>
             <option value="availableFrom">Sort by: Available from</option>
           </Form.Select>
-          {isFaculty && <Button onClick={onAdd} variant="success">+ Quiz</Button>}
+          {isFaculty && (
+            <Button onClick={onAdd} variant="success">
+              + Quiz
+            </Button>
+          )}
         </div>
       </div>
 
@@ -106,46 +111,76 @@ export default function QuizList() {
           No quizzes yet. {isFaculty ? "Click + Quiz to add one." : ""}
         </Card>
       ) : (
-        <ListGroup>
+        // ⬇️ Green left border that runs the full height of the list
+        <ListGroup
+          className="rounded-3"
+          style={{ borderLeft: "4px solid var(--bs-success)" }}
+        >
           {sorted.map((q) => {
             const meta = qMeta[q._id];
             const availability = availabilityLabel(q);
+
+            const detailParts: (string | null)[] = [
+              `Availability: ${availability}`,
+              q.due ? `Due: ${formatDateTime(q.due)}` : null,
+              meta ? `Points: ${meta.points}` : null,
+              meta ? `Questions: ${meta.count}` : null,
+              me?.role === "STUDENT" ? `Score: ${lastByQuiz[q._id]?.score ?? "—"}` : null,
+            ];
+            const details = detailParts.filter(Boolean).join(" | ");
+
             return (
               <ListGroup.Item
                 key={q._id}
                 className="d-flex justify-content-between align-items-start"
               >
-                <div>
-                  <div className="d-flex align-items-center gap-2">
-                    <Button
-                      variant="link"
-                      className="p-0 me-2"
-                      onClick={() => togglePublish(q)}
-                      title={q.published ? "Unpublish" : "Publish"}
-                    >
-                      <span style={{ fontSize: 20 }}>{q.published ? "✅" : "🚫"}</span>
-                    </Button>
-                    <a
-                      onClick={() => navigate(`../Quizzes/${q._id}`)}
-                      style={{ cursor: "pointer", fontWeight: 600 }}
-                    >
-                      {q.title}
-                    </a>
-                  </div>
-                  <div className="text-muted small mt-1">
-                    <div>Availability: {availability}</div>
-                    <div>Due: {formatDateTime(q.due)}</div>
-                    <div>
-                      Points: {meta ? meta.points : "…"} • Questions: {meta ? meta.count : "…"}
+                {/* LEFT: green rocket + title + details (publish moved to right) */}
+                <div className="d-flex align-items-start">
+                  <span
+                    className="me-2 rounded-circle bg-success d-inline-flex align-items-center justify-content-center"
+                    style={{ width: 28, height: 28 }}
+                    title="Quiz"
+                  >
+                    <span style={{ fontSize: 14, lineHeight: 1 }}>🚀</span>
+                  </span>
+
+                  <div>
+                    <div className="d-flex align-items-center gap-2">
+                      <a
+                        onClick={() => navigate(`../Quizzes/${q._id}`)}
+                        style={{ cursor: "pointer" }}
+                        className="fw-semibold link-body-emphasis"
+                      >
+                        {q.title}
+                      </a>
                     </div>
-                    {me?.role === "STUDENT" && (
-                      <div>Score: {lastByQuiz[q._id]?.score ?? "—"}</div>
-                    )}
+                    <div className="text-muted small mt-1">{details}</div>
                   </div>
                 </div>
-                <div className="d-flex align-items-center gap-3">
+
+                {/* RIGHT: Publish/Unpublish button just left of the ⋮ with padding */}
+                <div className="d-flex align-items-center">
+                  {isFaculty && (
+                    <Button
+                      size="sm"
+                      variant={q.published ? "outline-secondary" : "success"}
+                      onClick={() => togglePublish(q)}
+                      title={q.published ? "Unpublish" : "Publish"}
+                      className="me-2 px-3"
+                    >
+                      {q.published ? "Unpublish" : "Publish"}
+                    </Button>
+                  )}
+
                   <Dropdown align="end">
-                    <Dropdown.Toggle variant="outline-secondary" size="sm">⋯</Dropdown.Toggle>
+                    <Dropdown.Toggle
+                      variant="outline-secondary"
+                      size="sm"
+                      className="border-0"
+                      aria-label="Actions"
+                    >
+                      ⋮
+                    </Dropdown.Toggle>
                     <Dropdown.Menu>
                       <Dropdown.Item onClick={() => navigate(`../Quizzes/${q._id}`)}>
                         Open

@@ -7,14 +7,16 @@ import type { Attempt, AttemptAnswerPayload, Question, Quiz } from "./types";
 export default function QuizTake() {
   const { qid } = useParams();
   const navigate = useNavigate();
+
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, string | number | boolean>>({});
   const [submitted, setSubmitted] = useState<Attempt | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [step, setStep] = useState(0); // for one-at-a-time
-  const [access, setAccess] = useState<string>("");
-  const [remainingSec, setRemainingSec] = useState<number | null>(null);
+
+  const [step, setStep] = useState(0);                         // one-at-a-time
+  const [access, setAccess] = useState<string>("");            // access code entry
+  const [remainingSec, setRemainingSec] = useState<number | null>(null); // countdown
 
   useEffect(() => {
     (async () => {
@@ -22,11 +24,22 @@ export default function QuizTake() {
       const q = await api.getQuiz(qid);
       setQuiz(q);
       setQuestions(await api.listQuestions(qid));
-      if (q.timeLimitMinutes && q.timeLimitMinutes > 0) {
-        setRemainingSec(q.timeLimitMinutes * 60);
-      }
     })();
   }, [qid]);
+
+  // Determine if access code is required and if the quiz is unlocked
+  const requiresCode =
+    !!quiz?.accessCode && quiz.accessCode.trim().length > 0;
+  const unlocked =
+    !requiresCode || (quiz && access.trim() === quiz.accessCode.trim());
+
+  // Start timer only once, when the quiz is unlocked
+  useEffect(() => {
+    if (!quiz) return;
+    if (unlocked && remainingSec == null && quiz.timeLimitMinutes && quiz.timeLimitMinutes > 0) {
+      setRemainingSec(quiz.timeLimitMinutes * 60);
+    }
+  }, [quiz, unlocked, remainingSec]);
 
   // countdown timer: auto-submits when it hits zero
   useEffect(() => {
@@ -35,10 +48,7 @@ export default function QuizTake() {
       onSubmit();
       return;
     }
-    const id = setInterval(
-      () => setRemainingSec((s) => (s == null ? s : s - 1)),
-      1000
-    );
+    const id = setInterval(() => setRemainingSec((s) => (s == null ? s : s - 1)), 1000);
     return () => clearInterval(id);
   }, [remainingSec, submitted]);
 
@@ -49,6 +59,7 @@ export default function QuizTake() {
 
   async function onSubmit() {
     if (!qid) return;
+    // Keep server-side guard for access code for safety
     if (quiz?.accessCode && access.trim() !== quiz.accessCode.trim()) {
       setError("Access code is incorrect");
       return;
@@ -79,29 +90,22 @@ export default function QuizTake() {
           return (
             <Card
               key={ans.question}
-              className="mb-3 p-3"
+              className="mb-3"
               style={{
-                borderLeft: `6px solid ${
-                  ans.isCorrect ? "var(--bs-success)" : "var(--bs-danger)"
-                }`,
+                borderLeft: `6px solid ${ans.isCorrect ? "var(--bs-success)" : "var(--bs-danger)"}`,
               }}
             >
-              <div className="mb-1">
-                <strong>Q{i + 1}.</strong> {q?.title}{" "}
-                <span className="text-muted">({q?.points} pts)</span>
+              <div className="bg-light px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
+                <div><strong>Q{i + 1}.</strong> {q?.title}</div>
+                <div className="text-muted small">{q?.points} pts</div>
               </div>
-              <div
-                className="mb-2"
-                dangerouslySetInnerHTML={{ __html: q?.questionHtml || "" }}
-              />
-              <div>{ans.isCorrect ? "✅ Correct" : "❌ Incorrect"}</div>
+              <div className="p-3 border-bottom" dangerouslySetInnerHTML={{ __html: q?.questionHtml || "" }} />
+              <div className="p-3">{ans.isCorrect ? "✅ Correct" : "❌ Incorrect"}</div>
             </Card>
           );
         })}
         <div className="d-flex gap-2">
-          <Button variant="secondary" onClick={() => navigate("../" + qid)}>
-            Back to Details
-          </Button>
+          <Button variant="secondary" onClick={() => navigate("../" + qid)}>Back to Details</Button>
         </div>
       </div>
     );
@@ -110,113 +114,148 @@ export default function QuizTake() {
   const oneAtATime = quiz.oneQuestionAtATime;
   const toRender = oneAtATime ? [questions[step]].filter(Boolean) : questions;
   const progress = oneAtATime
-    ? Math.round((step / questions.length) * 100)
-    : Math.round((Object.keys(answers).length / questions.length) * 100);
+    ? Math.round(((questions.length ? step : 0) / (questions.length || 1)) * 100)
+    : Math.round(((Object.keys(answers).length) / (questions.length || 1)) * 100);
 
   return (
     <div className="container mt-3">
       <h3>Take Quiz: {quiz.title}</h3>
 
-      {remainingSec != null && (
-        <Alert variant={remainingSec < 60 ? "warning" : "secondary"}>
-          Time left:{" "}
-          <strong>
-            {Math.floor(remainingSec / 60)}:{String(remainingSec % 60).padStart(2, "0")}
-          </strong>
-        </Alert>
+      {/* 4) Access code FIRST; gate the quiz until correct */}
+      {requiresCode && !unlocked && (
+        <>
+          {error && <Alert variant="danger" className="mt-2">{error}</Alert>}
+          <Card className="mb-3">
+            <div className="bg-light px-3 py-2 border-bottom">
+              <strong>Access Code Required</strong>
+            </div>
+            <div className="p-3">
+              <div className="d-flex gap-2">
+                <input
+                  className="form-control"
+                  placeholder="Enter access code"
+                  value={access}
+                  onChange={(e) => setAccess(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+                />
+              </div>
+              <div className="text-muted small mt-2">Enter the access code to unlock the quiz.</div>
+            </div>
+          </Card>
+          {/* Don't show anything else until unlocked */}
+          <div className="d-flex gap-2">
+            <Button variant="secondary" onClick={() => navigate("../" + qid)}>Back to Details</Button>
+          </div>
+          <br />
+        </>
       )}
 
-      {quiz.accessCode && (
-        <Alert variant="secondary">
-          This quiz requires an access code.
-          <div className="d-flex gap-2 mt-2">
-            <input
-              className="form-control"
-              placeholder="Enter access code"
-              value={access}
-              onChange={(e) => setAccess(e.target.value)}
-            />
-          </div>
-        </Alert>
+      {/* 1) Small timer, left-aligned (shown only after unlocked and timer exists) */}
+      {unlocked && remainingSec != null && (
+        <div className="small text-muted mb-2">
+          ⏳ Time left: <strong>{Math.floor(remainingSec / 60)}:{String(remainingSec % 60).padStart(2, "0")}</strong>
+        </div>
       )}
 
-      {error && <Alert variant="danger">{error}</Alert>}
+      {/* Error (non-access) */}
+      {unlocked && error && <Alert variant="danger">{error}</Alert>}
 
-      {oneAtATime && <ProgressBar now={progress} className="mb-3" />}
+      {/* One-at-a-time progress */}
+      {unlocked && oneAtATime && <ProgressBar now={progress} className="mb-3" />}
 
-      {toRender.map((q, i) => (
-        <Card key={q._id} className="mb-3 p-3">
-          <div className="mb-1">
-            <strong>Q{oneAtATime ? step + 1 : i + 1}.</strong> {q.title}{" "}
-            <span className="text-muted">({q.points} pts)</span>
+      {/* 2) Question card layout with grey header, split sections */}
+      {unlocked && toRender.map((q, i) => (
+        <Card key={q._id} className="mb-3">
+          {/* Grey header */}
+          <div className="bg-light px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
+            <div><strong>Q{oneAtATime ? step + 1 : i + 1}.</strong> {q.title}</div>
+            <div className="text-muted small">{q.points} pts</div>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: q.questionHtml || "" }} />
-          {q.type === "MCQ" && (
-            <div className="mt-2 d-flex flex-column gap-2">
-              {(q.choices || []).map((c, idx) => (
-                <label key={idx} className="d-flex align-items-center gap-2">
+
+          {/* Question text section */}
+          <div className="p-3 border-bottom" dangerouslySetInnerHTML={{ __html: q.questionHtml || "" }} />
+
+          {/* Answers section */}
+          <div className="p-3">
+            {q.type === "MCQ" && (
+              <div className="vstack gap-2">
+                {(q.choices || []).map((c, idx) => (
+                  <label key={idx} className="form-check d-flex align-items-center gap-2">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name={`q-${q._id}`}
+                      onChange={() => setAnswers((a) => ({ ...a, [q._id]: idx }))}
+                    />
+                    <span className="form-check-label">{c.text}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {q.type === "TRUE_FALSE" && (
+              <div className="d-flex gap-4">
+                <label className="form-check d-flex align-items-center gap-2">
                   <input
+                    className="form-check-input"
                     type="radio"
                     name={`q-${q._id}`}
-                    onChange={() => setAnswers((a) => ({ ...a, [q._id]: idx }))}
+                    onChange={() => setAnswers((a) => ({ ...a, [q._id]: true }))}
                   />
-                  <span>{c.text}</span>
+                  <span className="form-check-label">True</span>
                 </label>
-              ))}
-            </div>
-          )}
-          {q.type === "TRUE_FALSE" && (
-            <div className="mt-2 d-flex gap-3">
-              <label className="d-flex align-items-center gap-2">
-                <input
-                  type="radio"
-                  name={`q-${q._id}`}
-                  onChange={() => setAnswers((a) => ({ ...a, [q._id]: true }))}
-                />{" "}
-                True
-              </label>
-              <label className="d-flex align-items-center gap-2">
-                <input
-                  type="radio"
-                  name={`q-${q._id}`}
-                  onChange={() => setAnswers((a) => ({ ...a, [q._id]: false }))}
-                />{" "}
-                False
-              </label>
-            </div>
-          )}
-          {q.type === "FILL_BLANK" && (
-            <div className="mt-2">
+                <label className="form-check d-flex align-items-center gap-2">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name={`q-${q._id}`}
+                    onChange={() => setAnswers((a) => ({ ...a, [q._id]: false }))}
+                  />
+                  <span className="form-check-label">False</span>
+                </label>
+              </div>
+            )}
+
+            {q.type === "FILL_BLANK" && (
               <input
                 className="form-control"
                 onChange={(e) => setAnswers((a) => ({ ...a, [q._id]: e.target.value }))}
               />
-            </div>
-          )}
+            )}
+          </div>
         </Card>
       ))}
 
-      <div className="d-flex gap-2">
-        {oneAtATime && (
-          <>
-            <Button
-              variant="secondary"
-              disabled={step === 0 || quiz.lockAfterAnswering}
-              onClick={() => setStep((s) => Math.max(0, s - 1))}
-            >
-              Back
-            </Button>
-            <Button
-              variant="secondary"
-              disabled={step >= questions.length - 1}
-              onClick={() => setStep((s) => Math.min(questions.length - 1, s + 1))}
-            >
-              Next
-            </Button>
-          </>
-        )}
-        <Button onClick={onSubmit}>Submit</Button>
-      </div>
+      {/* Navigation (for one-at-a-time) */}
+      {unlocked && (
+        <div className="d-flex gap-2">
+          {oneAtATime && (
+            <>
+              <Button
+                variant="secondary"
+                disabled={step === 0 || quiz.lockAfterAnswering}
+                onClick={() => setStep((s) => Math.max(0, s - 1))}
+              >
+                Back
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={step >= questions.length - 1}
+                onClick={() => setStep((s) => Math.min(questions.length - 1, s + 1))}
+              >
+                Next
+              </Button>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* 3) Submit on its own line and grey */}
+      {unlocked && (
+        <div className="mt-3">
+          <Button variant="secondary" onClick={onSubmit}>Submit</Button>
+        </div>
+      )}
     </div>
   );
 }
