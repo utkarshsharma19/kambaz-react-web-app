@@ -4,6 +4,16 @@ import { Alert, Button, Card, ProgressBar } from "react-bootstrap";
 import * as api from "./client";
 import type { Attempt, AttemptAnswerPayload, Question, Quiz } from "./types";
 
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export default function QuizTake() {
   const { qid } = useParams();
   const navigate = useNavigate();
@@ -14,24 +24,43 @@ export default function QuizTake() {
   const [submitted, setSubmitted] = useState<Attempt | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const [step, setStep] = useState(0);                         // one-at-a-time
-  const [access, setAccess] = useState<string>("");            // access code entry
+  const [step, setStep] = useState(0);                          
+  const [access, setAccess] = useState<string>("");            
   const [remainingSec, setRemainingSec] = useState<number | null>(null); // countdown
+
+
+  const [choiceOrderMap, setChoiceOrderMap] = useState<Record<string, number[]>>({});
 
   useEffect(() => {
     (async () => {
       if (!qid) return;
       const q = await api.getQuiz(qid);
+      const qsRaw = await api.listQuestions(qid);
+
+  
+      const qs = q.shuffleAnswers ? shuffle(qsRaw) : qsRaw;
+
+      // If shuffle is enabled, also shuffle choices per MCQ question,
+      // but keep a mapping from displayed index -> original index so grading stays correct.
+      const map: Record<string, number[]> = {};
+      if (q.shuffleAnswers) {
+        qs.forEach((qq) => {
+          if (qq.type === "MCQ" && Array.isArray(qq.choices) && qq.choices.length > 1) {
+            const originalIdx = qq.choices.map((_, i) => i);
+            map[qq._id] = shuffle(originalIdx);
+          }
+        });
+      }
+
       setQuiz(q);
-      setQuestions(await api.listQuestions(qid));
+      setQuestions(qs);
+      setChoiceOrderMap(map);
     })();
   }, [qid]);
 
   // Determine if access code is required and if the quiz is unlocked
-  const requiresCode =
-    !!quiz?.accessCode && quiz.accessCode.trim().length > 0;
-  const unlocked =
-    !requiresCode || (quiz && access.trim() === quiz.accessCode.trim());
+  const requiresCode = !!quiz?.accessCode && quiz.accessCode.trim().length > 0;
+  const unlocked = !requiresCode || (quiz && access.trim() === quiz.accessCode.trim());
 
   // Start timer only once, when the quiz is unlocked
   useEffect(() => {
@@ -121,7 +150,7 @@ export default function QuizTake() {
     <div className="container mt-3">
       <h3>Take Quiz: {quiz.title}</h3>
 
-      {/* 4) Access code FIRST; gate the quiz until correct */}
+      {/* Access code FIRST; gate the quiz until correct */}
       {requiresCode && !unlocked && (
         <>
           {error && <Alert variant="danger" className="mt-2">{error}</Alert>}
@@ -142,7 +171,6 @@ export default function QuizTake() {
               <div className="text-muted small mt-2">Enter the access code to unlock the quiz.</div>
             </div>
           </Card>
-          {/* Don't show anything else until unlocked */}
           <div className="d-flex gap-2">
             <Button variant="secondary" onClick={() => navigate("../" + qid)}>Back to Details</Button>
           </div>
@@ -150,7 +178,7 @@ export default function QuizTake() {
         </>
       )}
 
-      {/* 1) Small timer, left-aligned (shown only after unlocked and timer exists) */}
+      {/* Small timer, left-aligned (shown only after unlocked and timer exists) */}
       {unlocked && remainingSec != null && (
         <div className="small text-muted mb-2">
           ⏳ Time left: <strong>{Math.floor(remainingSec / 60)}:{String(remainingSec % 60).padStart(2, "0")}</strong>
@@ -163,68 +191,80 @@ export default function QuizTake() {
       {/* One-at-a-time progress */}
       {unlocked && oneAtATime && <ProgressBar now={progress} className="mb-3" />}
 
-      {/* 2) Question card layout with grey header, split sections */}
-      {unlocked && toRender.map((q, i) => (
-        <Card key={q._id} className="mb-3">
-          {/* Grey header */}
-          <div className="bg-light px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
-            <div><strong>Q{oneAtATime ? step + 1 : i + 1}.</strong> {q.title}</div>
-            <div className="text-muted small">{q.points} pts</div>
-          </div>
+      {/* Question card layout with grey header, split sections */}
+      {unlocked && toRender.map((q, i) => {
+        // Determine the order in which to DISPLAY choices for this question
+        const order = q.type === "MCQ"
+          ? (choiceOrderMap[q._id] || (q.choices ? q.choices.map((_, idx) => idx) : []))
+          : [];
 
-          {/* Question text section */}
-          <div className="p-3 border-bottom" dangerouslySetInnerHTML={{ __html: q.questionHtml || "" }} />
+        return (
+          <Card key={q._id} className="mb-3">
+            {/* Grey header */}
+            <div className="bg-light px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
+              <div><strong>Q{oneAtATime ? step + 1 : i + 1}.</strong> {q.title}</div>
+              <div className="text-muted small">{q.points} pts</div>
+            </div>
 
-          {/* Answers section */}
-          <div className="p-3">
-            {q.type === "MCQ" && (
-              <div className="vstack gap-2">
-                {(q.choices || []).map((c, idx) => (
-                  <label key={idx} className="form-check d-flex align-items-center gap-2">
+            {/* Question text section */}
+            <div className="p-3 border-bottom" dangerouslySetInnerHTML={{ __html: q.questionHtml || "" }} />
+
+            {/* Answers section */}
+            <div className="p-3">
+              {q.type === "MCQ" && (
+                <div className="vstack gap-2">
+                  {order.map((origIdx) => {
+                    const c = q.choices?.[origIdx];
+                    if (!c) return null;
+                    return (
+                      <label key={origIdx} className="form-check d-flex align-items-center gap-2">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name={`q-${q._id}`}
+                          // Store ORIGINAL index in the answer so server grading stays correct
+                          onChange={() => setAnswers((a) => ({ ...a, [q._id]: origIdx }))}
+                        />
+                        <span className="form-check-label">{c.text}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+
+              {q.type === "TRUE_FALSE" && (
+                <div className="d-flex gap-4">
+                  <label className="form-check d-flex align-items-center gap-2">
                     <input
                       className="form-check-input"
                       type="radio"
                       name={`q-${q._id}`}
-                      onChange={() => setAnswers((a) => ({ ...a, [q._id]: idx }))}
+                      onChange={() => setAnswers((a) => ({ ...a, [q._id]: true }))}
                     />
-                    <span className="form-check-label">{c.text}</span>
+                    <span className="form-check-label">True</span>
                   </label>
-                ))}
-              </div>
-            )}
+                  <label className="form-check d-flex align-items-center gap-2">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name={`q-${q._id}`}
+                      onChange={() => setAnswers((a) => ({ ...a, [q._id]: false }))}
+                    />
+                    <span className="form-check-label">False</span>
+                  </label>
+                </div>
+              )}
 
-            {q.type === "TRUE_FALSE" && (
-              <div className="d-flex gap-4">
-                <label className="form-check d-flex align-items-center gap-2">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name={`q-${q._id}`}
-                    onChange={() => setAnswers((a) => ({ ...a, [q._id]: true }))}
-                  />
-                  <span className="form-check-label">True</span>
-                </label>
-                <label className="form-check d-flex align-items-center gap-2">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name={`q-${q._id}`}
-                    onChange={() => setAnswers((a) => ({ ...a, [q._id]: false }))}
-                  />
-                  <span className="form-check-label">False</span>
-                </label>
-              </div>
-            )}
-
-            {q.type === "FILL_BLANK" && (
-              <input
-                className="form-control"
-                onChange={(e) => setAnswers((a) => ({ ...a, [q._id]: e.target.value }))}
-              />
-            )}
-          </div>
-        </Card>
-      ))}
+              {q.type === "FILL_BLANK" && (
+                <input
+                  className="form-control"
+                  onChange={(e) => setAnswers((a) => ({ ...a, [q._id]: e.target.value }))}
+                />
+              )}
+            </div>
+          </Card>
+        );
+      })}
 
       {/* Navigation (for one-at-a-time) */}
       {unlocked && (
@@ -250,7 +290,7 @@ export default function QuizTake() {
         </div>
       )}
 
-      {/* 3) Submit on its own line and grey */}
+      {/* Submit on its own line and grey */}
       {unlocked && (
         <div className="mt-3">
           <Button variant="secondary" onClick={onSubmit}>Submit</Button>
